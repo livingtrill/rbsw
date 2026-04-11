@@ -238,8 +238,8 @@ nav {
 #hero {
   position: relative; min-height: 100vh;
   display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding-top: 72px; overflow: hidden;
+  align-items: center; justify-content: flex-start;
+  padding-top: 100px; padding-bottom: 110px; overflow: hidden;
   background: #080602;
 }
 
@@ -344,15 +344,6 @@ nav {
 }
 .qf-btn:hover { background: rgba(200,131,42,0.25); border-color: var(--amber-light); color: #fff; }
 
-.scroll-cue {
-  position: absolute; bottom: 32px; left:50%; transform:translateX(-50%);
-  z-index:10; display:flex; flex-direction:column; align-items:center; gap:8px;
-  opacity:0; animation:riseIn 1s 1.6s forwards;
-}
-.scroll-cue-text { font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:rgba(255,255,255,0.4); }
-.scroll-cue-track { width:1.5px; height:40px; background:rgba(255,255,255,0.15); border-radius:2px; overflow:hidden; }
-.scroll-cue-dot { width:100%; height:12px; background:var(--amber-light); border-radius:2px; animation:slideDown 1.8s ease-in-out infinite; }
-@keyframes slideDown { 0%{transform:translateY(-12px)} 100%{transform:translateY(40px)} }
 
 .hero-stats {
   position:absolute; bottom:0; left:0; right:0; z-index:10;
@@ -490,7 +481,7 @@ nav {
 
 /* ── LISTING GRID ── */
 .listings-grid {
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(335px,1fr)); gap:26px;
+  display:grid; grid-template-columns:repeat(3,1fr); gap:26px;
 }
 
 article.biz-card {
@@ -716,62 +707,36 @@ footer { background:var(--ink); color:rgba(244,236,216,0.65); padding:70px 0 36p
 .footer-bottom-links { display:flex; gap:22px; }
 .footer-bottom-links a:hover { color:var(--sand); }
 
-/* ── HAMBURGER ── */
-.hamburger {
-  display: none; flex-direction: column; justify-content: center;
-  gap: 5px; width: 38px; height: 38px; padding: 5px;
-  cursor: pointer; flex-shrink: 0;
-}
-.hamburger span {
-  display: block; height: 2px; border-radius: 2px; background: #fff;
-  transition: transform var(--t), opacity var(--t);
-  transform-origin: center;
-}
-header.scrolled .hamburger span { background: var(--bark); }
-.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
-.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* ── MOBILE NAV ── */
-.mobile-nav {
-  position: fixed; inset: 0; z-index: 850;
-  display: none; pointer-events: none;
+/* ── SKELETON LOADING CARDS ── */
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
 }
-.mobile-nav.open { display: block; pointer-events: all; }
-.mobile-nav-overlay {
-  position: absolute; inset: 0;
-  background: rgba(6,8,14,0.72); backdrop-filter: blur(4px);
-  opacity: 0; transition: opacity 0.3s ease;
+.card-skeleton {
+  background: var(--linen); border-radius: var(--rl);
+  overflow: hidden; border: 1px solid var(--border);
 }
-.mobile-nav.open .mobile-nav-overlay { opacity: 1; }
-.mobile-nav-drawer {
-  position: absolute; top: 0; right: 0; bottom: 0;
-  width: min(300px, 82vw);
-  background: var(--bark);
-  transform: translateX(110%);
-  transition: transform 0.38s var(--ease);
-  padding: 90px 28px 40px;
-  display: flex; flex-direction: column; gap: 4px;
-  overflow-y: auto;
-  box-shadow: -12px 0 40px rgba(0,0,0,0.3);
+.skel-img {
+  height: 210px;
+  background: linear-gradient(90deg, var(--parchment) 25%, #e8e0d0 50%, var(--parchment) 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.5s infinite linear;
 }
-.mobile-nav.open .mobile-nav-drawer { transform: translateX(0); }
-.mobile-nav-link {
-  display: block; padding: 15px 0;
-  font-family: var(--ff-display); font-size: 1.25rem; font-weight: 600;
-  color: rgba(255,255,255,0.82);
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  transition: color var(--t);
+.skel-body { padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+.skel-line {
+  height: 12px; border-radius: 6px;
+  background: linear-gradient(90deg, var(--parchment) 25%, #e8e0d0 50%, var(--parchment) 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.5s infinite linear;
 }
-.mobile-nav-link:hover, .mobile-nav-link:active { color: var(--amber-light); }
-.mobile-nav-cta {
-  display: block; margin-top: 24px; text-align: center;
-  background: var(--amber); color: #fff;
-  padding: 14px 20px; border-radius: 100px;
-  font-weight: 600; font-size: 0.95rem;
-  transition: background var(--t);
+.skel-line--short { width: 40%; }
+.skel-line--med   { width: 65%; }
+.grid-error {
+  grid-column: 1 / -1; text-align: center;
+  padding: 60px 20px; color: var(--stone);
+  font-size: 1rem;
 }
-.mobile-nav-cta:hover { background: var(--forest); }
 
 /* ── BLUR-UP LAZY IMAGES ── */
 .card-img-wrap { background: var(--parchment); }
@@ -890,16 +855,20 @@ header.scrolled .hamburger span { background: var(--bark); }
 .form-success p { max-width: 340px; margin: 0 auto 26px; }
 
 /* ── RESPONSIVE ── */
+@media (max-width:1100px) {
+  .listings-grid { grid-template-columns:repeat(2,1fr); }
+}
 @media (max-width:900px) {
   nav { padding:0 18px; }
-  .nav-links, .nav-cta { display:none; }
-  .hamburger { display: flex; }
   .hero-stats { display:none; }
   .mission-inner { flex-direction:column; gap:24px; }
   .impact-grid { grid-template-columns:1fr; }
   .detail-layout { grid-template-columns:1fr; }
   .related-grid { grid-template-columns:1fr; }
   .footer-top { grid-template-columns:1fr 1fr; gap:32px; }
+  .listings-grid { grid-template-columns:repeat(2,1fr); }
+}
+@media (max-width:600px) {
   .listings-grid { grid-template-columns:1fr; }
 }
 @media (max-width:600px) {
@@ -927,22 +896,8 @@ header.scrolled .hamburger span { background: var(--bark); }
     <div class="nav-cta">
       <button class="btn-primary-nav" onclick="openSubmitModal()">List Your Business</button>
     </div>
-    <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" onclick="toggleMobileNav()">
-      <span></span><span></span><span></span>
-    </button>
   </nav>
 </header>
-
-<!-- ── MOBILE NAV ── -->
-<div class="mobile-nav" id="mobile-nav" role="dialog" aria-label="Navigation menu">
-  <div class="mobile-nav-overlay" onclick="closeMobileNav()"></div>
-  <nav class="mobile-nav-drawer">
-    <a class="mobile-nav-link" href="#" onclick="closeMobileNav();goHome();scrollToEl('#listings')">Browse</a>
-    <a class="mobile-nav-link" href="#" onclick="closeMobileNav();goHome();scrollToEl('#categories')">Categories</a>
-    <a class="mobile-nav-link" href="mission.html" onclick="closeMobileNav()">Our Mission</a>
-    <button class="mobile-nav-cta" onclick="closeMobileNav();openSubmitModal()">List Your Business</button>
-  </nav>
-</div>
 
 <!-- ── MAIN VIEW ── -->
 <div id="main-view">
@@ -997,11 +952,6 @@ header.scrolled .hamburger span { background: var(--bark); }
         <button class="qf-btn" onclick="qFilter('Beauty & Personal Care')">✨ Beauty</button>
         <button class="qf-btn" onclick="qFilter('Finance & Legal')">⚖ Finance</button>
       </div>
-    </div>
-
-    <div class="scroll-cue" aria-hidden="true">
-      <div class="scroll-cue-track"><div class="scroll-cue-dot"></div></div>
-      <span class="scroll-cue-text">Explore</span>
     </div>
 
     <div class="hero-stats" aria-label="Directory stats">
@@ -1462,8 +1412,54 @@ header.scrolled .hamburger span { background: var(--bark); }
 </div><!-- /modal-backdrop -->
 
 <script>
+/* ── SUPABASE CONFIG ── */
+const SUPABASE_URL  = 'https://coymqpazmzvxanabnhre.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNveW1xcGF6bXp2eGFuYWJuaHJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU4OTEzMDgsImV4cCI6MjA5MTQ2NzMwOH0.-SSDHl4DrGWfxfPIsPuUMr1NkSdoHVAZSis3KhSQEUk'; // Supabase Dashboard → Settings → API → anon public
+
+async function fetchListings() {
+  const url = SUPABASE_URL + '/rest/v1/businesses'
+    + '?select=*,categories(id,name,slug),business_tags(tags(name))'
+    + '&status=eq.approved'
+    + '&order=featured.desc,rating.desc';
+  const res = await fetch(url, {
+    headers: {
+      'apikey':        SUPABASE_ANON,
+      'Authorization': 'Bearer ' + SUPABASE_ANON
+    }
+  });
+  if (!res.ok) throw new Error('Listings fetch failed: ' + res.status);
+  const rows = await res.json();
+  return rows.map(r => ({
+    id:        r.id,
+    slug:      r.slug,
+    name:      r.name,
+    category:  r.categories?.name  ?? '',
+    ownerName: r.owner_name,
+    city:      r.city + ', ' + r.state_code,
+    state:     r.state_code,
+    location:  r.location,
+    address:   r.address,
+    phone:     r.phone,
+    email:     r.email,
+    website:   r.website,
+    hours:     r.hours,
+    price:     r.price_range,
+    rating:    parseFloat(r.rating),
+    reviews:   r.review_count,
+    shortDesc: r.short_desc,
+    desc:      r.description,
+    tags:      (r.business_tags ?? []).map(bt => bt.tags?.name).filter(Boolean),
+    image:     r.image_url,
+    imageAlt:  r.image_alt,
+    featured:  r.featured,
+    lat:       r.lat,
+    lng:       r.lng,
+  }));
+}
+
 /* ── DATA ── */
-const LISTINGS = [
+let LISTINGS = [];
+const _PLACEHOLDER = [
   {
     id:1,slug:"nourish-kitchen-co",name:"Nourish Kitchen Co.",category:"Food & Restaurant",
     ownerName:"Chef Tamara Williams",city:"Atlanta, GA",state:"GA",location:"West End, Atlanta",
@@ -1698,7 +1694,7 @@ const LISTINGS = [
     image:"https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=600&q=80",
     imageAlt:"Greenleaf Property Services team at work on home repairs",featured:false
   }
-];
+]; // end _PLACEHOLDER
 
 /* ── GALAXY BACKGROUND ── */
 (function initGalaxy() {
@@ -1904,7 +1900,7 @@ function card(biz, idx) {
 }
 
 /* ── STATE & GRID ── */
-let visible = [...LISTINGS];
+let visible = [];
 let page = 1;
 const PER = 9;
 let activeCat = '', activeOwn = '';
@@ -2135,25 +2131,6 @@ function goHome(e) {
   document.title = 'Real Black Wall Street — Small Business Directory';
 }
 
-/* ── MOBILE NAV ── */
-function toggleMobileNav() {
-  const nav = document.getElementById('mobile-nav');
-  const btn = document.getElementById('hamburger');
-  const isOpen = nav.classList.contains('open');
-  if (isOpen) { closeMobileNav(); } else {
-    nav.classList.add('open');
-    btn.classList.add('open');
-    btn.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
-  }
-}
-function closeMobileNav() {
-  document.getElementById('mobile-nav').classList.remove('open');
-  const btn = document.getElementById('hamburger');
-  btn.classList.remove('open');
-  btn.setAttribute('aria-expanded', 'false');
-  document.body.style.overflow = '';
-}
 
 /* ── SUBMISSION MODAL ── */
 function openSubmitModal() {
@@ -2174,19 +2151,40 @@ function closeSubmitModal() {
   }, 320);
 }
 
-function handleSubmit(e) {
+async function handleSubmit(e) {
   e.preventDefault();
   if (!validateForm()) return;
   const btn = document.getElementById('btn-submit-main');
   btn.disabled = true;
   btn.textContent = 'Submitting…';
-  // Simulate async submission (replace with real fetch() when backend exists)
-  setTimeout(() => {
+
+  const payload = {
+    businessName: document.getElementById('f-biz-name').value.trim(),
+    category:     document.getElementById('f-biz-cat').value,
+    priceRange:   document.getElementById('f-biz-price').value,
+    description:  document.getElementById('f-biz-desc').value.trim(),
+    state:        document.getElementById('f-biz-state').value,
+    city:         document.getElementById('f-biz-city').value.trim(),
+    ownerName:    document.getElementById('f-biz-owner').value.trim(),
+    email:        document.getElementById('f-biz-email').value.trim(),
+    submittedAt:  new Date().toISOString(),
+  };
+
+  try {
+    const res = await fetch('YOUR_WEBHOOK_URL_HERE', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error('Webhook returned ' + res.status);
     document.getElementById('submit-form').style.display = 'none';
     document.getElementById('form-success').classList.add('show');
+  } catch (err) {
+    console.error('Submission error:', err);
     btn.disabled = false;
     btn.textContent = 'Submit Listing →';
-  }, 1200);
+    alert('Something went wrong. Please try again or email us directly.');
+  }
 }
 
 function validateForm() {
@@ -2234,11 +2232,46 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
   if (document.getElementById('submit-modal').classList.contains('open')) closeSubmitModal();
-  if (document.getElementById('mobile-nav').classList.contains('open')) closeMobileNav();
 });
 
+/* ── GRID LOADING STATE ── */
+function showGridLoading() {
+  const grid = document.getElementById('grid');
+  if (!grid) return;
+  grid.innerHTML = Array(6).fill(0).map(() => `
+    <div class="card-skeleton">
+      <div class="skel-img"></div>
+      <div class="skel-body">
+        <div class="skel-line skel-line--short"></div>
+        <div class="skel-line"></div>
+        <div class="skel-line skel-line--med"></div>
+      </div>
+    </div>`).join('');
+}
+function showGridError() {
+  const grid = document.getElementById('grid');
+  if (!grid) return;
+  grid.innerHTML = `<div class="grid-error">
+    <p>Could not load listings. Please refresh to try again.</p>
+  </div>`;
+}
+
 /* ── INIT ── */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  showGridLoading();
+
+  try {
+    // Use placeholder data until anon key is configured
+    if (SUPABASE_ANON === 'YOUR_ANON_KEY_HERE') {
+      LISTINGS = _PLACEHOLDER;
+    } else {
+      LISTINGS = await fetchListings();
+    }
+  } catch (err) {
+    console.error('Failed to load listings from Supabase:', err);
+    LISTINGS = _PLACEHOLDER; // fallback to placeholder on error
+  }
+
   visible = [...LISTINGS];
   renderGrid();
 

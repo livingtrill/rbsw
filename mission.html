@@ -226,47 +226,6 @@ nav {
 }
 .btn-primary-nav:hover { background: var(--forest); transform: translateY(-1px); }
 
-/* Hamburger */
-.hamburger {
-  display: none; flex-direction: column; justify-content: center;
-  gap: 5px; width: 38px; height: 38px; padding: 5px; cursor: pointer;
-}
-.hamburger span {
-  display: block; height: 2px; border-radius: 2px; background: #fff;
-  transition: transform var(--t), opacity var(--t); transform-origin: center;
-}
-header.scrolled .hamburger span { background: var(--bark); }
-.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.hamburger.open span:nth-child(2) { opacity: 0; }
-.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-/* Mobile nav */
-.mobile-nav { position: fixed; inset: 0; z-index: 850; display: none; pointer-events: none; }
-.mobile-nav.open { display: block; pointer-events: all; }
-.mobile-nav-overlay { position: absolute; inset: 0; background: rgba(6,8,14,0.72); backdrop-filter: blur(4px); opacity: 0; transition: opacity 0.3s ease; }
-.mobile-nav.open .mobile-nav-overlay { opacity: 1; }
-.mobile-nav-drawer {
-  position: absolute; top: 0; right: 0; bottom: 0; width: min(300px, 82vw);
-  background: var(--bark); transform: translateX(110%);
-  transition: transform 0.38s var(--ease);
-  padding: 90px 28px 40px; display: flex; flex-direction: column; gap: 4px;
-  overflow-y: auto; box-shadow: -12px 0 40px rgba(0,0,0,0.3);
-}
-.mobile-nav.open .mobile-nav-drawer { transform: translateX(0); }
-.mobile-nav-link {
-  display: block; padding: 15px 0;
-  font-family: var(--ff-display); font-size: 1.25rem; font-weight: 600;
-  color: rgba(255,255,255,0.82); border-bottom: 1px solid rgba(255,255,255,0.1);
-  transition: color var(--t);
-}
-.mobile-nav-link:hover { color: var(--amber-light); }
-.mobile-nav-link.active { color: var(--amber-light); }
-.mobile-nav-cta {
-  display: block; margin-top: 24px; text-align: center;
-  background: var(--amber); color: #fff; padding: 14px 20px; border-radius: 100px;
-  font-weight: 600; font-size: 0.95rem; transition: background var(--t);
-}
-.mobile-nav-cta:hover { background: var(--forest); }
 
 /* ─── HERO ─── */
 #hero {
@@ -627,8 +586,6 @@ footer { background: var(--ink); color: rgba(244,236,216,0.6); padding: 52px 0 3
 /* ─── RESPONSIVE ─── */
 @media (max-width:900px) {
   nav { padding: 0 18px; }
-  .nav-links, .nav-cta { display: none; }
-  .hamburger { display: flex; }
   .two-col, .why-now { grid-template-columns: 1fr; gap: 36px; }
   .two-col.flip .col-text, .two-col.flip .col-visual { order: unset; }
   .timeline::before { left: 20px; }
@@ -667,22 +624,8 @@ footer { background: var(--ink); color: rgba(244,236,216,0.6); padding: 52px 0 3
     <div class="nav-cta">
       <a href="index.html" class="btn-primary-nav">Browse Directory</a>
     </div>
-    <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" onclick="toggleMobileNav()">
-      <span></span><span></span><span></span>
-    </button>
   </nav>
 </header>
-
-<!-- ── MOBILE NAV ── -->
-<div class="mobile-nav" id="mobile-nav" role="dialog" aria-label="Navigation menu">
-  <div class="mobile-nav-overlay" onclick="closeMobileNav()"></div>
-  <nav class="mobile-nav-drawer">
-    <a class="mobile-nav-link" href="index.html" onclick="closeMobileNav()">Directory</a>
-    <a class="mobile-nav-link" href="index.html#categories" onclick="closeMobileNav()">Categories</a>
-    <a class="mobile-nav-link active" href="mission.html" onclick="closeMobileNav()">Our Mission</a>
-    <a class="mobile-nav-cta" href="index.html">Browse Directory</a>
-  </nav>
-</div>
 
 <!-- ── HERO ── -->
 <section id="hero">
@@ -1178,22 +1121,6 @@ window.addEventListener('scroll', () => {
   document.getElementById('site-header').classList.toggle('scrolled', scrollY > 20);
 });
 
-/* ── MOBILE NAV ── */
-function toggleMobileNav() {
-  const nav=document.getElementById('mobile-nav'), btn=document.getElementById('hamburger');
-  const open=nav.classList.contains('open');
-  if (open) { closeMobileNav(); } else {
-    nav.classList.add('open'); btn.classList.add('open');
-    btn.setAttribute('aria-expanded','true'); document.body.style.overflow='hidden';
-  }
-}
-function closeMobileNav() {
-  document.getElementById('mobile-nav').classList.remove('open');
-  const btn=document.getElementById('hamburger');
-  btn.classList.remove('open'); btn.setAttribute('aria-expanded','false');
-  document.body.style.overflow='';
-}
-document.addEventListener('keydown', e => { if (e.key==='Escape') closeMobileNav(); });
 
 /* ── SCROLL REVEAL ── */
 const revealObserver = new IntersectionObserver(entries => {
