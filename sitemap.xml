@@ -21,6 +21,14 @@
     <priority>0.6</priority>
   </url>
 
+  <!-- Mission page -->
+  <url>
+    <loc>https://realblackwallstreet.com/mission</loc>
+    <lastmod>2026-04-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
   <!-- Category pages -->
   <url>
     <loc>https://realblackwallstreet.com/food-restaurant</loc>
