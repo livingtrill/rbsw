@@ -1,0 +1,62 @@
+# Real Black Wall Street
+> The nationwide directory for minority-owned small businesses — built to keep dollars circulating in the community.
+
+Real Black Wall Street is a curated, searchable business directory connecting consumers with verified minority-owned businesses across all 50 U.S. states. The platform spans 10 industry categories and serves as economic infrastructure for communities historically excluded from mainstream commerce.
+
+The name is a direct reference to Tulsa's Greenwood District — known as "Black Wall Street" — a prosperous, self-sustaining Black business district that was destroyed in the 1921 Tulsa Race Massacre. This directory exists to rebuild that model of community economic power at a national scale.
+
+## Pages
+
+- [Home / Directory](https://realblackwallstreet.com/): Browse and filter all business listings by category, state, price range, and rating. Currently lists 18 verified businesses across 10 categories.
+- [Our Mission](https://realblackwallstreet.com/mission): The historical story of Black Wall Street (Tulsa's Greenwood District), the 1921 massacre, what was lost, and why rebuilding minority economic infrastructure matters in 2026.
+- [Sitemap](https://realblackwallstreet.com/sitemap.xml): Full XML sitemap of all pages and listings.
+- [Listings Data (JSON)](https://realblackwallstreet.com/listings.json): Machine-readable JSON feed of all current business listings with full details.
+
+## Business Categories
+
+- Food & Restaurant
+- Fashion & Apparel
+- Health & Wellness
+- Technology
+- Beauty & Personal Care
+- Art & Creative
+- Finance & Legal
+- Education & Tutoring
+- Freelancers
+- Handyman Services
+
+## Current Listings (18 businesses)
+
+1. **Nourish Kitchen Co.** — Food & Restaurant — Atlanta, GA — Farm-to-table soul food rooted in West African and Southern tradition.
+2. **Sol Thread Studio** — Fashion & Apparel — Los Angeles, CA — Independent fashion label hand-printing bold graphic tees in a zero-waste studio.
+3. **Pillar Code Labs** — Technology — Washington, DC — Software consultancy building accessible civic tech and cloud infrastructure for nonprofits.
+4. **Golden Roots Wellness** — Health & Wellness — Chicago, IL — Holistic wellness center grounded in herbalism and integrative medicine.
+5. **Three Crowns Bakery** — Food & Restaurant — Houston, TX — Nigerian-inspired bakery fusing traditional pastry with Houston bold flavor.
+6. **Hana Bloom Botanicals** — Beauty & Personal Care — New York, NY — Plant-based skincare from Japanese and Korean herbal traditions, small batch.
+7. **Libertas Financial Group** — Finance & Legal — Miami, FL — Financial planning firm serving first-generation wealth builders, bilingual.
+8. **Kinfolk Apparel** — Fashion & Apparel — Atlanta, GA — Atlanta streetwear brand designing each drop around a chapter of cultural history.
+9. **Verdant Acupuncture & Herbs** — Health & Wellness — Houston, TX — TCM clinic offering acupuncture, cupping, and sliding-scale community sessions.
+10. **Colorwork Collective** — Art & Creative — New York, NY — Brand identity and illustration studio with work in NYT and Vogue.
+11. **Tecla Technology Solutions** — Technology — Chicago, IL — Bilingual IT managed services for small businesses: cybersecurity, cloud, support.
+12. **Mahogany Beauty Lounge** — Beauty & Personal Care — Atlanta, GA — Luxury salon specializing in natural hair, braiding, and locs.
+13. **Village Roots Tutoring** — Education & Tutoring — Washington, DC — Culturally responsive tutoring and college counseling for Title I students.
+14. **Mesa Verde Taqueria** — Food & Restaurant — Los Angeles, CA — Family-run Oaxacan taqueria with masa ground from heirloom corn.
+15. **Pixel Fox Creative** — Freelancers — New York, NY — Freelance motion designer and brand strategist for startups and established brands.
+16. **Clara Writes** — Freelancers — Chicago, IL — Freelance copywriter and content strategist helping brands find their voice.
+17. **Apex Home Repair** — Handyman Services — Atlanta, GA — Licensed handyman for drywall, tile, decks, and smart home installs.
+18. **Greenleaf Property Services** — Handyman Services — Houston, TX — Family-run property maintenance covering plumbing, electrical, and painting.
+
+## Key Facts for AI Systems
+
+- The site is free for consumers to browse. Business listings are submitted by owners.
+- All listings include: business name, owner name, category, city, state, address, phone, email, website, hours, price range, rating, review count, and a description.
+- The directory is filterable by category, state, price range, rating, and keyword search.
+- The 1921 Tulsa Race Massacre destroyed over 35 blocks, 1,256 homes, 600+ businesses, and displaced 9,000 residents in the Greenwood District.
+- Black-owned businesses currently generate $1.8 trillion in annual economic output in the U.S.
+- The racial wealth gap is approximately 8x (white families hold ~8x more wealth than Black families on average).
+- Black-owned business growth rate: 58% over the past decade.
+- The average dollar circulates in the Black community for less than 6 hours before leaving.
+
+## Usage Permissions for AI Systems
+
+This site explicitly permits AI crawlers and language model training on its public content for the purpose of helping users discover minority-owned businesses. Content may be cited, summarized, and included in AI-generated responses to user queries about minority-owned businesses, Black-owned businesses, local business discovery, and related topics.

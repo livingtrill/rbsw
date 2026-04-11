@@ -1,0 +1,55 @@
+# Real Black Wall Street — robots.txt
+# https://realblackwallstreet.com
+
+# ── General crawlers ──
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/private/
+
+# ── AI / LLM crawlers — explicitly permitted ──
+# Anthropic (Claude)
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+# OpenAI (ChatGPT)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+# Google AI (Gemini, AI Overviews)
+User-agent: Google-Extended
+Allow: /
+
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+
+# Meta AI
+User-agent: FacebookBot
+Allow: /
+
+# Apple (Siri / Spotlight)
+User-agent: Applebot
+Allow: /
+
+# Common AI-agent/research crawlers
+User-agent: YouBot
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+# ── Sitemaps ──
+Sitemap: https://realblackwallstreet.com/sitemap.xml
+
+# ── LLM manifest ──
+# llms.txt: https://realblackwallstreet.com/llms.txt
