@@ -1,1 +1,2156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Real Black Wall Street — The nationwide small business directory. Discover and support businesses across every industry and niche.">
+<meta property="og:title" content="Real Black Wall Street — Small Business Directory">
+<meta property="og:description" content="Discover and support small businesses across every industry nationwide — from food and fashion to tech and finance.">
+<meta property="og:type" content="website">
+<title>Real Black Wall Street — Small Business Directory</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,800;1,9..144,300;1,9..144,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ─── TOKENS ─── */
+:root {
+  --ink:        #1C1C18;
+  --bark:       #2E2A22;
+  --forest:     #3D5C35;
+  --sage-mid:   #5A7A50;
+  --amber:      #C8832A;
+  --amber-light:#E8A84D;
+  --sand:       #D4B070;
+  --parchment:  #F2EAD6;
+  --linen:      #F8F3E8;
+  --sage:       #6B7C5C;
+  --moss:       #4A5E3A;
+  --dusty-teal: #4E7C75;
+  --stone:      #8A7E70;
+  --border:     rgba(46,42,34,0.13);
+  --border-med: rgba(46,42,34,0.2);
+
+  --sh-sm:  0 2px 10px rgba(28,20,16,0.08);
+  --sh-md:  0 8px 32px rgba(28,20,16,0.12);
+  --sh-lg:  0 24px 72px rgba(28,20,16,0.18);
+
+  --ff-display: 'Fraunces', Georgia, serif;
+  --ff-body:    'Outfit', system-ui, sans-serif;
+  --r:  10px;
+  --rl: 18px;
+  --rx: 28px;
+  --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --t: 0.32s var(--ease);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: var(--ff-body);
+  background: var(--linen);
+  color: var(--ink);
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; }
+
+h1,h2,h3,h4 { font-family: var(--ff-display); line-height: 1.15; font-weight: 600; }
+h1 { font-size: clamp(2.6rem, 5.5vw, 4.4rem); }
+h2 { font-size: clamp(1.9rem, 3.2vw, 2.8rem); }
+h3 { font-size: clamp(1.15rem, 2vw, 1.45rem); }
+p  { color: var(--stone); line-height: 1.75; }
+
+.container { max-width: 1240px; margin: 0 auto; padding: 0 28px; }
+.section    { padding: 88px 0; }
+
+/* ── TEXTURE ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity: 0.5;
+}
+
+/* ── HEADER ── */
+header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+  background: rgba(6,8,16,0.75);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  transition: background var(--t), box-shadow var(--t);
+}
+header.scrolled {
+  background: rgba(248,243,232,0.88);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--sh-md);
+}
+header.scrolled .logo { color: var(--bark); }
+header.scrolled .logo span { color: var(--amber); }
+header.scrolled .nav-links a { color: var(--stone); }
+header.scrolled .btn-nav-outline { border-color: var(--border-med); color: var(--bark); }
+header.scrolled .btn-primary-nav { background: var(--amber); }
+
+nav {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 72px; padding: 0 36px;
+}
+
+.logo {
+  display: flex; align-items: center; gap: 11px;
+  font-family: var(--ff-display); font-size: 1.55rem; font-weight: 800;
+  color: #fff;
+}
+.logo span { color: var(--amber-light); }
+.logo-mark {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--amber), var(--forest));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; color: #fff; font-weight: 800;
+  box-shadow: 0 3px 12px rgba(200,131,42,0.4);
+  flex-shrink: 0;
+}
+
+.nav-links {
+  display: flex; align-items: center; gap: 36px;
+  font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,0.75);
+}
+.nav-links a { transition: color var(--t); position: relative; padding-bottom: 2px; }
+.nav-links a::after {
+  content:''; position:absolute; bottom:-3px; left:0; right:0;
+  height:1.5px; background:var(--amber-light);
+  transform:scaleX(0); transition:transform var(--t); transform-origin:left;
+}
+.nav-links a:hover { color: #fff; }
+.nav-links a:hover::after { transform: scaleX(1); }
+
+.nav-cta { display: flex; align-items: center; gap: 12px; }
+.btn-nav-outline {
+  padding: 9px 20px; border-radius: 100px;
+  border: 1.5px solid rgba(255,255,255,0.25);
+  font-size: 0.855rem; font-weight: 500; color: rgba(255,255,255,0.85);
+  transition: all var(--t);
+}
+.btn-nav-outline:hover { border-color: var(--amber-light); color: #fff; }
+.btn-primary-nav {
+  padding: 10px 22px; border-radius: 100px;
+  background: var(--amber); color: #fff;
+  font-size: 0.855rem; font-weight: 600;
+  box-shadow: 0 4px 14px rgba(200,131,42,0.4);
+  transition: all var(--t);
+}
+.btn-primary-nav:hover { background: var(--forest); transform: translateY(-1px); }
+
+/* ── HERO ── */
+#hero {
+  position: relative; min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding-top: 72px; overflow: hidden;
+  background: #06080E;
+}
+
+#galaxy-canvas {
+  position: absolute; inset: 0; z-index: 1;
+  pointer-events: none;
+  width: 100%; height: 100%;
+}
+
+.hero-content {
+  position: relative; z-index: 10;
+  text-align: center; padding: 0 28px;
+  max-width: 820px;
+}
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  backdrop-filter: blur(10px);
+  padding: 7px 18px; border-radius: 100px;
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase; color: rgba(255,255,255,0.88);
+  margin-bottom: 28px;
+  opacity: 0; animation: riseIn 0.8s 0.15s forwards;
+}
+.eyebrow-pulse {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--amber-light);
+  animation: breathe 2.2s ease-in-out infinite;
+}
+@keyframes breathe { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.65;transform:scale(1.45)} }
+
+.hero-h1 {
+  margin-bottom: 24px; color: #fff;
+  opacity: 0; animation: riseIn 0.9s 0.35s forwards;
+}
+.hero-h1 em { font-style: italic; font-weight: 300; color: var(--amber-light); }
+.hero-h1 strong { font-weight: 800; display: block; }
+
+.hero-lead {
+  font-size: 1.12rem; font-weight: 300; color: rgba(255,255,255,0.72);
+  max-width: 540px; margin: 0 auto 44px;
+  opacity: 0; animation: riseIn 0.9s 0.55s forwards;
+}
+
+@keyframes riseIn {
+  from { opacity:0; transform:translateY(30px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.hero-search-wrap {
+  opacity: 0; animation: riseIn 0.9s 0.75s forwards;
+  max-width: 620px; margin: 0 auto 48px;
+}
+.hero-search {
+  display: flex; align-items: center;
+  background: rgba(255,255,255,0.10);
+  backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(255,255,255,0.18);
+  border-radius: 16px;
+  padding: 10px 10px 10px 22px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.35);
+  transition: border-color var(--t), box-shadow var(--t);
+}
+.hero-search:focus-within {
+  border-color: rgba(232,168,77,0.5);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.35), 0 0 0 5px rgba(200,131,42,0.12);
+}
+.hero-search-icon { color: rgba(255,255,255,0.5); margin-right: 10px; flex-shrink:0; }
+.hero-search input {
+  flex:1; border:none; background:transparent; outline:none;
+  font-family:var(--ff-body); font-size:1rem; color:#fff;
+}
+.hero-search input::placeholder { color: rgba(255,255,255,0.45); }
+.hero-search-divider { width:1px; height:28px; background:rgba(255,255,255,0.18); margin:0 12px; }
+.hero-search select {
+  border:none; background:transparent; outline:none;
+  font-family:var(--ff-body); font-size:0.875rem; color:rgba(255,255,255,0.7);
+  cursor:pointer;
+}
+.hero-search select option { background: #1a1a2e; color: #fff; }
+.hero-search-btn {
+  background: var(--amber); color:#fff;
+  padding: 12px 24px; border-radius: 10px;
+  font-size:0.9rem; font-weight:600; white-space:nowrap;
+  box-shadow: 0 4px 14px rgba(200,131,42,0.45);
+  transition: all var(--t); margin-left:8px;
+}
+.hero-search-btn:hover { background: var(--forest); }
+
+.hero-quick-filters {
+  display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;
+  opacity: 0; animation: riseIn 0.9s 0.95s forwards;
+}
+.qf-btn {
+  padding: 7px 16px; border-radius: 100px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  backdrop-filter: blur(8px);
+  font-size: 0.8rem; font-weight: 500; color: rgba(255,255,255,0.82);
+  transition: all var(--t); cursor: pointer;
+}
+.qf-btn:hover { background: rgba(200,131,42,0.25); border-color: var(--amber-light); color: #fff; }
+
+.scroll-cue {
+  position: absolute; bottom: 32px; left:50%; transform:translateX(-50%);
+  z-index:10; display:flex; flex-direction:column; align-items:center; gap:8px;
+  opacity:0; animation:riseIn 1s 1.6s forwards;
+}
+.scroll-cue-text { font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:rgba(255,255,255,0.4); }
+.scroll-cue-track { width:1.5px; height:40px; background:rgba(255,255,255,0.15); border-radius:2px; overflow:hidden; }
+.scroll-cue-dot { width:100%; height:12px; background:var(--amber-light); border-radius:2px; animation:slideDown 1.8s ease-in-out infinite; }
+@keyframes slideDown { 0%{transform:translateY(-12px)} 100%{transform:translateY(40px)} }
+
+.hero-stats {
+  position:absolute; bottom:0; left:0; right:0; z-index:10;
+  border-top:1px solid rgba(255,255,255,0.1);
+  background:rgba(6,8,14,0.65); backdrop-filter:blur(12px);
+  display:flex; justify-content:center; padding: 0 20px;
+}
+.stat-item { padding:20px 44px; text-align:center; border-right:1px solid rgba(255,255,255,0.1); }
+.stat-item:last-child { border-right:none; }
+.stat-num { font-family:var(--ff-display); font-size:2.2rem; font-weight:800; color:#fff; line-height:1; }
+.stat-lbl { font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.5); margin-top:4px; }
+
+/* ── MISSION BAND ── */
+.mission-band {
+  background: linear-gradient(135deg, var(--bark) 0%, var(--forest) 100%);
+  padding: 60px 0; position:relative; overflow:hidden;
+}
+.mission-band::before {
+  content:''; position:absolute; inset:0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='1.5' fill='rgba(255,255,255,0.05)'/%3E%3C/svg%3E");
+}
+.mission-inner { display:flex; align-items:center; justify-content:space-between; gap:48px; }
+.mission-quote {
+  font-family:var(--ff-display); font-size:clamp(1.3rem,2.5vw,2rem);
+  font-weight:300; font-style:italic; color:rgba(255,255,255,0.9);
+  max-width:620px; line-height:1.5; position:relative; z-index:1;
+}
+.mission-quote strong { font-weight:600; color:#fff; }
+.mission-cta {
+  flex-shrink:0; position:relative; z-index:1;
+  background:rgba(255,255,255,0.15); color:#fff;
+  border:1.5px solid rgba(255,255,255,0.35);
+  padding:13px 28px; border-radius:100px;
+  font-size:0.9rem; font-weight:600;
+  transition:all var(--t); white-space:nowrap; cursor:pointer;
+}
+.mission-cta:hover { background:rgba(255,255,255,0.25); }
+
+/* ── SECTION HEADER ── */
+.sec-label {
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:0.75rem; font-weight:600; letter-spacing:0.13em;
+  text-transform:uppercase; color:var(--amber); margin-bottom:14px;
+}
+.sec-label::before {
+  content:''; width:24px; height:1.5px; background:var(--amber); border-radius:2px;
+}
+.sec-title { margin-bottom:16px; color:var(--bark); }
+.sec-title em { font-style:italic; font-weight:300; color:var(--forest); }
+.sec-lead { font-size:1.05rem; max-width:560px; }
+
+/* ── CATEGORY GRID ── */
+.categories-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:14px;
+  margin-top:44px;
+}
+.cat-card {
+  background:rgba(255,255,255,0.7);
+  border:1.5px solid var(--border);
+  border-radius:var(--rl); padding:24px 18px;
+  text-align:center; cursor:pointer;
+  transition:all var(--t); position:relative; overflow:hidden;
+}
+.cat-card::before {
+  content:''; position:absolute; inset:0; border-radius:inherit;
+  background:linear-gradient(135deg,var(--forest),var(--moss));
+  opacity:0; transition:opacity var(--t);
+}
+.cat-card:hover::before { opacity:1; }
+.cat-card:hover { transform:translateY(-5px); box-shadow:var(--sh-md); border-color:transparent; }
+.cat-card:hover .cat-emoji,
+.cat-card:hover .cat-name,
+.cat-card:hover .cat-cnt { color:#fff; }
+
+.cat-emoji { font-size:2rem; display:block; margin-bottom:12px; position:relative; z-index:1; transition:transform var(--t); }
+.cat-card:hover .cat-emoji { transform:scale(1.2) rotate(-8deg); }
+.cat-name { font-size:0.86rem; font-weight:600; color:var(--bark); position:relative;z-index:1; transition:color var(--t); }
+.cat-cnt  { font-size:0.75rem; color:var(--stone); margin-top:4px; position:relative;z-index:1; transition:color var(--t); }
+
+/* ── FILTER BAR ── */
+.filter-bar {
+  background:rgba(255,255,255,0.75);
+  border:1.5px solid var(--border);
+  border-radius:var(--rl); padding:22px 26px;
+  box-shadow:var(--sh-sm); margin-bottom:36px;
+  backdrop-filter:blur(8px);
+}
+.filter-bar-head {
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;
+}
+.filter-bar-label { font-size:0.78rem; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:var(--stone); }
+.filter-result-count { font-size:0.85rem; color:var(--stone); }
+.filter-result-count strong { color:var(--bark); font-weight:600; }
+
+.filter-row { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+.f-search {
+  flex:1; min-width:220px;
+  display:flex; align-items:center; gap:8px;
+  background:var(--parchment); border:1.5px solid var(--border);
+  border-radius:100px; padding:9px 18px; transition:border-color var(--t);
+}
+.f-search:focus-within { border-color:var(--amber); }
+.f-search input { border:none;background:transparent;outline:none;flex:1;font-family:var(--ff-body);font-size:0.875rem;color:var(--bark); }
+.f-search input::placeholder { color:var(--stone); }
+.f-select {
+  appearance:none;
+  background:var(--parchment) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%238A7E70' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 13px center;
+  border:1.5px solid var(--border); border-radius:100px;
+  padding:9px 36px 9px 18px; font-family:var(--ff-body);
+  font-size:0.875rem; color:var(--bark); cursor:pointer;
+  transition:border-color var(--t); min-width:150px;
+}
+.f-select:focus { outline:none; border-color:var(--amber); }
+.f-reset {
+  padding:9px 20px; border-radius:100px;
+  border:1.5px solid var(--border); font-size:0.875rem;
+  color:var(--stone); transition:all var(--t);
+}
+.f-reset:hover { border-color:var(--amber);color:var(--amber); }
+
+/* ── TABS ── */
+.cat-tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:32px; }
+.c-tab {
+  display:flex; align-items:center; gap:7px;
+  padding:8px 18px; border-radius:100px;
+  border:1.5px solid var(--border);
+  background:rgba(255,255,255,0.65);
+  font-size:0.835rem; font-weight:500; color:var(--stone);
+  cursor:pointer; transition:all var(--t);
+}
+.c-tab:hover { border-color:var(--amber); color:var(--amber); }
+.c-tab.active { background:var(--bark); color:#fff; border-color:var(--bark); }
+.c-tab-n { font-size:0.72rem; padding:1px 7px; border-radius:100px; font-weight:600; background:rgba(0,0,0,0.08); }
+.c-tab.active .c-tab-n { background:rgba(255,255,255,0.2); }
+
+/* ── LISTING GRID ── */
+.listings-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(335px,1fr)); gap:26px;
+}
+
+article.biz-card {
+  background:#fff;
+  border:1.5px solid var(--border);
+  border-radius:var(--rx);
+  overflow:hidden; cursor:pointer;
+  transition:transform var(--t), box-shadow var(--t), border-color var(--t);
+  opacity:0; transform:translateY(36px);
+  position:relative;
+}
+article.biz-card.in-view {
+  opacity:1; transform:translateY(0);
+  transition-property:opacity,transform,box-shadow,border-color;
+}
+article.biz-card:hover {
+  transform:translateY(-7px) !important;
+  box-shadow:var(--sh-lg);
+  border-color:rgba(200,131,42,0.3);
+}
+article.biz-card.featured::after {
+  content:'Featured';
+  position:absolute; top:16px; left:-22px;
+  background:var(--amber); color:#fff;
+  font-size:0.68rem; font-weight:700; letter-spacing:0.08em;
+  text-transform:uppercase; padding:4px 30px;
+  transform:rotate(-45deg); transform-origin:center;
+  box-shadow:0 2px 8px rgba(200,131,42,0.4);
+}
+
+.card-img-wrap { position:relative; height:210px; overflow:hidden; }
+.card-img-wrap img { width:100%; height:100%; object-fit:cover; transition:transform 0.7s var(--ease); }
+article.biz-card:hover .card-img-wrap img { transform:scale(1.07); }
+
+.card-local-badge {
+  position:absolute; bottom:14px; left:14px;
+  display:flex; align-items:center; gap:6px;
+  background:rgba(28,20,16,0.75); backdrop-filter:blur(8px);
+  color:#fff; padding:5px 12px; border-radius:100px;
+  font-size:0.72rem; font-weight:600; letter-spacing:0.04em;
+}
+.local-dot { width:6px;height:6px;border-radius:50%;background:var(--amber-light); }
+.card-rating-pill {
+  position:absolute; top:14px; right:14px;
+  background:rgba(255,255,255,0.92); backdrop-filter:blur(8px);
+  border:1px solid rgba(200,131,42,0.3);
+  color:var(--bark); padding:4px 10px; border-radius:100px;
+  font-size:0.8rem; font-weight:700;
+  display:flex; align-items:center; gap:4px;
+}
+.card-rating-pill::before { content:'★'; color:var(--amber); }
+
+.card-body { padding:22px; }
+.card-cat {
+  font-size:0.72rem; font-weight:700; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--forest); margin-bottom:7px;
+}
+.card-title {
+  font-family:var(--ff-display); font-size:1.25rem; font-weight:600;
+  color:var(--bark); margin-bottom:9px; line-height:1.25;
+}
+.card-desc { font-size:0.855rem; color:var(--stone); line-height:1.6; margin-bottom:18px; }
+.card-footer {
+  display:flex; align-items:center; justify-content:space-between;
+  border-top:1px solid var(--border); padding-top:15px;
+}
+.card-loc { display:flex; align-items:center; gap:5px; font-size:0.8rem; color:var(--stone); }
+.card-tags { display:flex; gap:5px; flex-wrap:wrap; }
+.card-tag { font-size:0.7rem; padding:3px 10px; border-radius:100px; background:var(--parchment); color:var(--stone); border:1px solid var(--border); }
+
+/* ── PAGINATION ── */
+.pagination { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:60px; }
+.pg-btn {
+  width:40px; height:40px; border-radius:50%;
+  border:1.5px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.9rem; color:var(--stone); transition:all var(--t); cursor:pointer;
+}
+.pg-btn:hover:not(:disabled) { border-color:var(--amber); color:var(--amber); }
+.pg-btn.active { background:var(--bark); color:#fff; border-color:var(--bark); }
+.pg-btn:disabled { opacity:0.3; pointer-events:none; }
+.pg-ellipsis { color:var(--stone); }
+
+/* ── IMPACT ── */
+.impact-section {
+  background:linear-gradient(160deg, var(--parchment) 0%, #EDE0C4 100%);
+  border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+}
+.impact-grid { display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center; }
+.impact-text h2 { margin-bottom:20px; }
+.impact-text p { margin-bottom:28px; }
+.impact-bullets { display:flex; flex-direction:column; gap:16px; }
+.impact-bullet {
+  display:flex; align-items:flex-start; gap:14px;
+  padding:18px 20px; border-radius:var(--r);
+  background:rgba(255,255,255,0.65); border:1px solid var(--border);
+}
+.impact-bullet-icon {
+  width:38px; height:38px; border-radius:10px; flex-shrink:0;
+  background:linear-gradient(135deg,var(--amber),var(--forest));
+  display:flex; align-items:center; justify-content:center;
+  font-size:1rem; color:#fff;
+}
+.impact-bullet-text h4 { font-size:0.9rem; font-weight:600; color:var(--bark); margin-bottom:3px; }
+.impact-bullet-text p  { font-size:0.82rem; margin:0; }
+
+.impact-stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.impact-stat-card {
+  background:rgba(255,255,255,0.7); border:1px solid var(--border);
+  border-radius:var(--rl); padding:28px 24px; transition:all var(--t);
+}
+.impact-stat-card:hover { transform:translateY(-4px); box-shadow:var(--sh-md); }
+.impact-stat-card:first-child {
+  grid-column:1/-1;
+  background:linear-gradient(135deg,var(--forest),var(--moss));
+  border-color:transparent;
+}
+.impact-stat-card:first-child .i-num,
+.impact-stat-card:first-child .i-lbl { color:#fff; }
+.i-num { font-family:var(--ff-display); font-size:2.8rem; font-weight:800; color:var(--bark); line-height:1; margin-bottom:6px; }
+.i-lbl { font-size:0.8rem; color:var(--stone); line-height:1.5; }
+.i-sub { font-size:0.75rem; color:var(--stone); margin-top:4px; }
+
+/* ── DETAIL VIEW ── */
+#detail-view { display:none; padding-top:72px; min-height:100vh; }
+#detail-view.on { display:block; }
+#main-view.off { display:none; }
+
+.detail-hero-img { position:relative; height:450px; overflow:hidden; }
+.detail-hero-img img { width:100%;height:100%;object-fit:cover; }
+.detail-hero-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(to top, rgba(28,20,16,0.85) 0%, rgba(28,20,16,0.2) 50%, transparent 100%);
+}
+.detail-hero-inner { position:absolute; bottom:36px; left:44px; right:44px; }
+.detail-h1 { font-family:var(--ff-display); font-size:clamp(2rem,4vw,3.2rem); color:#fff; margin-bottom:8px; }
+.detail-sub { color:rgba(255,255,255,0.78); font-size:1rem; }
+
+.detail-layout { display:grid; grid-template-columns:1fr 380px; gap:44px; padding:48px 0 80px; }
+.detail-body h2 { font-size:1.4rem; margin-bottom:16px; color:var(--bark); }
+.detail-body p  { margin-bottom:22px; }
+
+.back-btn {
+  display:inline-flex; align-items:center; gap:7px;
+  font-size:0.875rem; font-weight:500; color:var(--stone);
+  margin-bottom:24px; transition:color var(--t); cursor:pointer;
+}
+.back-btn:hover { color:var(--amber); }
+.back-btn svg { transition:transform var(--t); }
+.back-btn:hover svg { transform:translateX(-3px); }
+
+.breadcrumb {
+  display:flex; align-items:center; gap:8px;
+  font-size:0.83rem; color:var(--stone); padding:16px 0 0;
+}
+.breadcrumb a:hover { color:var(--amber); }
+.bc-sep { opacity:0.4; }
+
+.fact-panel {
+  background:rgba(255,255,255,0.8); border:1.5px solid var(--border);
+  border-radius:var(--rl); padding:26px; margin-bottom:28px;
+  backdrop-filter:blur(8px);
+}
+.fact-panel h2 { font-size:1rem; margin-bottom:18px; }
+.fact-row {
+  display:flex; gap:12px; align-items:flex-start;
+  font-size:0.875rem; padding:8px 0; border-bottom:1px solid var(--border);
+}
+.fact-row:last-child { border-bottom:none; }
+.f-key { color:var(--stone); min-width:90px; font-weight:500; }
+.f-val { color:var(--bark); }
+
+.sidebar-card {
+  background:#fff; border:1.5px solid var(--border);
+  border-radius:var(--rl); padding:26px; margin-bottom:20px;
+  position:sticky; top:88px;
+}
+.sidebar-card h3 { font-size:1rem; color:var(--bark); margin-bottom:18px; }
+.contact-row { display:flex; align-items:center; gap:12px; font-size:0.875rem; color:var(--bark); margin-bottom:14px; }
+.contact-row:last-child { margin-bottom:0; }
+.c-icon { width:34px; height:34px; border-radius:9px; flex-shrink:0; background:var(--parchment); display:flex; align-items:center; justify-content:center; font-size:0.9rem; border:1px solid var(--border); }
+.rating-row { display:flex; align-items:center; gap:14px; padding:16px 0; border-top:1px solid var(--border); border-bottom:1px solid var(--border); margin:16px 0; }
+.rating-big { font-family:var(--ff-display); font-size:3rem; font-weight:800; color:var(--bark); line-height:1; }
+.stars { display:flex; gap:2px; }
+.star { color:var(--amber); font-size:1rem; }
+.star.e { color:#ddd; }
+.r-count { font-size:0.78rem; color:var(--stone); }
+
+.map-placeholder {
+  width:100%; height:200px; border-radius:var(--r);
+  background:linear-gradient(135deg,var(--parchment),#EDE0C4);
+  border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  flex-direction:column; gap:8px; margin-top:16px;
+  color:var(--stone); font-size:0.85rem; text-align:center;
+}
+
+.related-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:22px; }
+.rel-card {
+  background:#fff; border:1.5px solid var(--border); border-radius:var(--r);
+  overflow:hidden; cursor:pointer; transition:all var(--t); display:flex;
+}
+.rel-card:hover { transform:translateY(-3px); box-shadow:var(--sh-md); }
+.rel-img { width:76px; height:76px; object-fit:cover; flex-shrink:0; }
+.rel-info { padding:10px 12px; }
+.rel-name { font-size:0.85rem; font-weight:600; color:var(--bark); margin-bottom:3px; }
+.rel-sub  { font-size:0.75rem; color:var(--forest); }
+
+/* ── FOOTER ── */
+footer { background:var(--ink); color:rgba(244,236,216,0.65); padding:70px 0 36px; }
+.footer-top { display:grid; grid-template-columns:2.2fr 1fr 1fr 1fr; gap:52px; margin-bottom:52px; }
+.footer-brand .logo { margin-bottom:16px; color:var(--parchment); }
+.footer-brand p { font-size:0.855rem; line-height:1.75; max-width:280px; color:rgba(244,236,216,0.55); }
+.footer-brand .logo-mark { background:linear-gradient(135deg,var(--amber),var(--forest)); }
+.footer-col h4 { font-family:var(--ff-display); font-size:0.95rem; color:var(--parchment); margin-bottom:18px; }
+.footer-links { display:flex; flex-direction:column; gap:11px; }
+.footer-links a { font-size:0.855rem; transition:color var(--t); }
+.footer-links a:hover { color:var(--sand); }
+.footer-bottom {
+  border-top:1px solid rgba(244,236,216,0.1); padding-top:30px;
+  display:flex; justify-content:space-between; align-items:center; font-size:0.8rem;
+}
+.footer-bottom-links { display:flex; gap:22px; }
+.footer-bottom-links a:hover { color:var(--sand); }
+
+/* ── HAMBURGER ── */
+.hamburger {
+  display: none; flex-direction: column; justify-content: center;
+  gap: 5px; width: 38px; height: 38px; padding: 5px;
+  cursor: pointer; flex-shrink: 0;
+}
+.hamburger span {
+  display: block; height: 2px; border-radius: 2px; background: #fff;
+  transition: transform var(--t), opacity var(--t);
+  transform-origin: center;
+}
+header.scrolled .hamburger span { background: var(--bark); }
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ── MOBILE NAV ── */
+.mobile-nav {
+  position: fixed; inset: 0; z-index: 850;
+  display: none; pointer-events: none;
+}
+.mobile-nav.open { display: block; pointer-events: all; }
+.mobile-nav-overlay {
+  position: absolute; inset: 0;
+  background: rgba(6,8,14,0.72); backdrop-filter: blur(4px);
+  opacity: 0; transition: opacity 0.3s ease;
+}
+.mobile-nav.open .mobile-nav-overlay { opacity: 1; }
+.mobile-nav-drawer {
+  position: absolute; top: 0; right: 0; bottom: 0;
+  width: min(300px, 82vw);
+  background: var(--bark);
+  transform: translateX(110%);
+  transition: transform 0.38s var(--ease);
+  padding: 90px 28px 40px;
+  display: flex; flex-direction: column; gap: 4px;
+  overflow-y: auto;
+  box-shadow: -12px 0 40px rgba(0,0,0,0.3);
+}
+.mobile-nav.open .mobile-nav-drawer { transform: translateX(0); }
+.mobile-nav-link {
+  display: block; padding: 15px 0;
+  font-family: var(--ff-display); font-size: 1.25rem; font-weight: 600;
+  color: rgba(255,255,255,0.82);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  transition: color var(--t);
+}
+.mobile-nav-link:hover, .mobile-nav-link:active { color: var(--amber-light); }
+.mobile-nav-cta {
+  display: block; margin-top: 24px; text-align: center;
+  background: var(--amber); color: #fff;
+  padding: 14px 20px; border-radius: 100px;
+  font-weight: 600; font-size: 0.95rem;
+  transition: background var(--t);
+}
+.mobile-nav-cta:hover { background: var(--forest); }
+
+/* ── BLUR-UP LAZY IMAGES ── */
+.card-img-wrap { background: var(--parchment); }
+.img-blur {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  filter: blur(18px); transform: scale(1.1);
+  transition: opacity 0.55s ease;
+  pointer-events: none; z-index: 0;
+}
+.lazy-img {
+  opacity: 0; transition: opacity 0.55s ease;
+  position: relative; z-index: 1;
+}
+.card-img-wrap.img-loaded .lazy-img { opacity: 1; }
+.card-img-wrap.img-loaded .img-blur  { opacity: 0; }
+
+/* ── SUBMISSION MODAL ── */
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 1100;
+  background: rgba(6,8,14,0.78); backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+.modal-backdrop.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--linen); border-radius: var(--rx);
+  width: 100%; max-width: 680px; max-height: 92vh; overflow-y: auto;
+  box-shadow: var(--sh-lg); position: relative;
+  transform: translateY(28px); transition: transform 0.36s var(--ease);
+}
+.modal-backdrop.open .modal { transform: translateY(0); }
+.modal-header {
+  padding: 30px 34px 22px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+  position: sticky; top: 0; background: var(--linen); z-index: 2;
+}
+.modal-title { font-family: var(--ff-display); font-size: 1.55rem; color: var(--bark); line-height: 1.2; }
+.modal-subtitle { font-size: 0.855rem; color: var(--stone); margin-top: 5px; }
+.modal-close {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; color: var(--stone); cursor: pointer;
+  transition: all var(--t);
+}
+.modal-close:hover { border-color: var(--amber); color: var(--amber); }
+.modal-body { padding: 26px 34px 34px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-grid .span2 { grid-column: 1 / -1; }
+.f-section-label {
+  grid-column: 1 / -1; margin-top: 8px;
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--amber);
+  display: flex; align-items: center; gap: 10px;
+}
+.f-section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+.field-grp { display: flex; flex-direction: column; gap: 5px; }
+.field-lbl {
+  font-size: 0.78rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.07em; color: var(--bark);
+}
+.field-lbl .req { color: var(--amber); }
+.f-inp, .f-sel, .f-txt {
+  font-family: var(--ff-body); font-size: 0.9rem; color: var(--bark);
+  background: #fff; border: 1.5px solid var(--border); border-radius: 10px;
+  padding: 10px 14px; width: 100%;
+  transition: border-color var(--t), box-shadow var(--t);
+}
+.f-inp:focus, .f-sel:focus, .f-txt:focus {
+  outline: none; border-color: var(--amber);
+  box-shadow: 0 0 0 4px rgba(200,131,42,0.1);
+}
+.f-inp.err, .f-sel.err, .f-txt.err { border-color: #d94f4f; }
+.f-err-msg { font-size: 0.76rem; color: #d94f4f; display: none; }
+.field-grp.has-err .f-err-msg { display: block; }
+.f-txt { resize: vertical; min-height: 96px; }
+.f-sel {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%238A7E70' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 13px center;
+  padding-right: 36px;
+}
+.form-actions {
+  display: flex; align-items: center; justify-content: flex-end; gap: 12px;
+  margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--border);
+}
+.btn-cancel {
+  padding: 10px 22px; border-radius: 100px;
+  border: 1.5px solid var(--border);
+  font-size: 0.875rem; color: var(--stone);
+  transition: all var(--t);
+}
+.btn-cancel:hover { border-color: var(--stone); color: var(--bark); }
+.btn-submit {
+  padding: 11px 28px; border-radius: 100px;
+  background: var(--amber); color: #fff;
+  font-size: 0.875rem; font-weight: 600;
+  box-shadow: 0 4px 14px rgba(200,131,42,0.35);
+  transition: all var(--t);
+}
+.btn-submit:hover { background: var(--forest); }
+.btn-submit:disabled { opacity: 0.55; pointer-events: none; }
+.form-success {
+  display: none; text-align: center; padding: 52px 28px;
+}
+.form-success.show { display: block; }
+.success-icon {
+  width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 22px;
+  background: linear-gradient(135deg, var(--forest), var(--sage));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.2rem;
+}
+.form-success h3 { font-family: var(--ff-display); font-size: 1.55rem; color: var(--bark); margin-bottom: 10px; }
+.form-success p { max-width: 340px; margin: 0 auto 26px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width:900px) {
+  nav { padding:0 18px; }
+  .nav-links, .nav-cta { display:none; }
+  .hamburger { display: flex; }
+  .hero-stats { display:none; }
+  .mission-inner { flex-direction:column; gap:24px; }
+  .impact-grid { grid-template-columns:1fr; }
+  .detail-layout { grid-template-columns:1fr; }
+  .related-grid { grid-template-columns:1fr; }
+  .footer-top { grid-template-columns:1fr 1fr; gap:32px; }
+  .listings-grid { grid-template-columns:1fr; }
+}
+@media (max-width:600px) {
+  .modal-header { padding: 22px 20px 18px; }
+  .modal-body   { padding: 20px 20px 28px; }
+  .form-grid    { grid-template-columns: 1fr; }
+  .form-grid .span2 { grid-column: 1; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header id="site-header">
+  <nav>
+    <a href="#" class="logo" onclick="goHome(event)">
+      <div class="logo-mark">B</div>
+      Real Black<span> Wall Street</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#" onclick="event.preventDefault();goHome();scrollToEl('#listings')">Browse</a></li>
+      <li><a href="#" onclick="event.preventDefault();goHome();scrollToEl('#categories')">Categories</a></li>
+      <li><a href="#" onclick="event.preventDefault();goHome();scrollToEl('#impact')">Our Mission</a></li>
+    </ul>
+    <div class="nav-cta">
+      <button class="btn-primary-nav" onclick="openSubmitModal()">List Your Business</button>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" onclick="toggleMobileNav()">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+</header>
+
+<!-- ── MOBILE NAV ── -->
+<div class="mobile-nav" id="mobile-nav" role="dialog" aria-label="Navigation menu">
+  <div class="mobile-nav-overlay" onclick="closeMobileNav()"></div>
+  <nav class="mobile-nav-drawer">
+    <a class="mobile-nav-link" href="#" onclick="closeMobileNav();goHome();scrollToEl('#listings')">Browse</a>
+    <a class="mobile-nav-link" href="#" onclick="closeMobileNav();goHome();scrollToEl('#categories')">Categories</a>
+    <a class="mobile-nav-link" href="#" onclick="closeMobileNav();goHome();scrollToEl('#impact')">Our Mission</a>
+    <button class="mobile-nav-cta" onclick="closeMobileNav();openSubmitModal()">List Your Business</button>
+  </nav>
+</div>
+
+<!-- ── MAIN VIEW ── -->
+<div id="main-view">
+
+  <!-- HERO -->
+  <section id="hero" aria-label="Hero — Real Black Wall Street Directory">
+    <canvas id="galaxy-canvas" aria-hidden="true"></canvas>
+
+    <div class="hero-content">
+      <div class="eyebrow">
+        <div class="eyebrow-pulse"></div>
+        The Nation's Small Business Directory
+      </div>
+
+      <h1 class="hero-h1">
+        <em>Discover &amp; support</em>
+        <strong>businesses rooted<br>across the nation</strong>
+      </h1>
+
+      <p class="hero-lead">
+        From food &amp; fashion to tech &amp; finance — find and connect with businesses across every industry, state, and niche.
+      </p>
+
+      <div class="hero-search-wrap">
+        <form class="hero-search" role="search" onsubmit="handleHeroSearch(event)">
+          <svg class="hero-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input id="hero-q" type="search" placeholder="Search businesses, industries, states…" aria-label="Search" autocomplete="off">
+          <div class="hero-search-divider"></div>
+          <select id="hero-cat" aria-label="Filter by industry">
+            <option value="">All Industries</option>
+            <option>Food &amp; Restaurant</option>
+            <option>Fashion &amp; Apparel</option>
+            <option>Health &amp; Wellness</option>
+            <option>Technology</option>
+            <option>Beauty &amp; Personal Care</option>
+            <option>Art &amp; Creative</option>
+            <option>Finance &amp; Legal</option>
+            <option>Education &amp; Tutoring</option>
+            <option>Freelancers</option>
+            <option>Handyman Services</option>
+          </select>
+          <button type="submit" class="hero-search-btn">Search</button>
+        </form>
+      </div>
+
+      <div class="hero-quick-filters" role="navigation" aria-label="Quick filters">
+        <button class="qf-btn" onclick="qFilter('Food & Restaurant')">🍽 Food &amp; Dining</button>
+        <button class="qf-btn" onclick="qFilter('Freelancers')">💼 Freelancers</button>
+        <button class="qf-btn" onclick="qFilter('Handyman Services')">🔧 Handyman</button>
+        <button class="qf-btn" onclick="qFilter('Technology')">💻 Technology</button>
+        <button class="qf-btn" onclick="qFilter('Health & Wellness')">🌿 Wellness</button>
+        <button class="qf-btn" onclick="qFilter('Beauty & Personal Care')">✨ Beauty</button>
+        <button class="qf-btn" onclick="qFilter('Finance & Legal')">⚖ Finance</button>
+      </div>
+    </div>
+
+    <div class="scroll-cue" aria-hidden="true">
+      <div class="scroll-cue-track"><div class="scroll-cue-dot"></div></div>
+      <span class="scroll-cue-text">Explore</span>
+    </div>
+
+    <div class="hero-stats" aria-label="Directory stats">
+      <div class="stat-item"><div class="stat-num">3,200+</div><div class="stat-lbl">Businesses Listed</div></div>
+      <div class="stat-item"><div class="stat-num">10</div><div class="stat-lbl">Industries</div></div>
+      <div class="stat-item"><div class="stat-num">50</div><div class="stat-lbl">States</div></div>
+      <div class="stat-item"><div class="stat-num">98%</div><div class="stat-lbl">Verified Listings</div></div>
+    </div>
+  </section>
+
+  <!-- MISSION BAND -->
+  <div class="mission-band">
+    <div class="container">
+      <div class="mission-inner">
+        <p class="mission-quote">
+          "Every dollar spent at a small business <strong>reinvests into the community</strong> — creating jobs, building wealth, and strengthening neighborhoods across the nation."
+        </p>
+        <button class="mission-cta" onclick="scrollToEl('#impact')">Our Impact →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORIES -->
+  <section id="categories" class="section">
+    <div class="container">
+      <div class="section-header">
+        <p class="sec-label">Browse by industry</p>
+        <h2 class="sec-title">Every niche, <em>every state</em></h2>
+        <p class="sec-lead">From corner shops to consulting firms — businesses span every industry and every state in the nation.</p>
+      </div>
+      <div class="categories-grid" role="navigation" aria-label="Browse by industry">
+        <div class="cat-card" onclick="filterByCategory('Food &amp; Restaurant')" tabindex="0" role="button">
+          <span class="cat-emoji">🍽️</span>
+          <div class="cat-name">Food &amp; Restaurant</div><div class="cat-cnt">624 businesses</div>
+        </div>
+        <div class="cat-card" onclick="filterByCategory('Fashion &amp; Apparel')" tabindex="0" role="button">
+          <span class="cat-emoji">👗</span>
+          <div class="cat-name">Fashion &amp; Apparel</div><div class="cat-cnt">287 businesses</div>
+        </div>
+        <div class="cat-card" onclick="filterByCategory('Health &amp; Wellness')" tabindex="0" role="button">
+          <span class="cat-emoji">🌿</span>
+          <div class="cat-name">Health &amp; Wellness</div><div class="cat-cnt">391 businesses</div>
+        </div>
+        <div class="cat-card" onclick="filterByCategory('Technology')" tabindex="0" role="button">
+          <span class="cat-emoji">💻</span>
+          <div class="cat-name">Technology</div><div class="cat-cnt">218 businesses</div>
+        </div>
+        <div class="cat-card" onclick="filterByCategory('Beauty &amp; Personal Care')" tabindex="0" role="button">
+          <span class="cat-emoji">✨</span>
+          <div class="cat-name">Beauty &amp; Personal Care</div><div class="cat-cnt">445 businesses</div>
+        </div>
+        <div class="cat-card" onclick="filterByCategory('Art &amp; Creative')" tabindex="0" role="button">
+          <span class="cat-emoji">🎨</span>
+          <div class="cat-name">Art &amp; Creative</div><div class="cat-cnt">173 businesses</div>
+        </div>
+        <div class="cat-card" onclick="filterByCategory('Finance &amp; Legal')" tabindex="0" role="button">
+          <span class="cat-emoji">⚖️</span>
+          <div class="cat-name">Finance &amp; Legal</div><div class="cat-cnt">129 businesses</div>
+        </div>
+        <div class="cat-card" onclick="filterByCategory('Education &amp; Tutoring')" tabindex="0" role="button">
+          <span class="cat-emoji">📚</span>
+          <div class="cat-name">Education &amp; Tutoring</div><div class="cat-cnt">208 businesses</div>
+        </div>
+        <div class="cat-card" onclick="filterByCategory('Freelancers')" tabindex="0" role="button">
+          <span class="cat-emoji">💼</span>
+          <div class="cat-name">Freelancers</div><div class="cat-cnt">364 businesses</div>
+        </div>
+        <div class="cat-card" onclick="filterByCategory('Handyman Services')" tabindex="0" role="button">
+          <span class="cat-emoji">🔧</span>
+          <div class="cat-name">Handyman Services</div><div class="cat-cnt">291 businesses</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LISTINGS -->
+  <main id="listings" class="section" style="padding-top:0">
+    <div class="container">
+      <div class="section-header" style="margin-bottom:40px">
+        <p class="sec-label">The directory</p>
+        <h2 class="sec-title">Featured <em>businesses</em></h2>
+      </div>
+
+      <div class="filter-bar" role="search" aria-label="Filter businesses">
+        <div class="filter-bar-head">
+          <span class="filter-bar-label">Filter &amp; Search</span>
+          <span class="filter-result-count"><strong id="result-count">18</strong> businesses found</span>
+        </div>
+        <div class="filter-row">
+          <div class="f-search">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input id="f-text" type="search" placeholder="Search by name, description, tags…" aria-label="Search" oninput="applyFilters()">
+          </div>
+          <select class="f-select" id="f-cat" aria-label="Industry" onchange="applyFilters()">
+            <option value="">All Industries</option>
+            <option>Food &amp; Restaurant</option>
+            <option>Fashion &amp; Apparel</option>
+            <option>Health &amp; Wellness</option>
+            <option>Technology</option>
+            <option>Beauty &amp; Personal Care</option>
+            <option>Art &amp; Creative</option>
+            <option>Finance &amp; Legal</option>
+            <option>Education &amp; Tutoring</option>
+            <option>Freelancers</option>
+            <option>Handyman Services</option>
+          </select>
+          <select class="f-select" id="f-state" aria-label="State" onchange="applyFilters()">
+            <option value="">All States</option>
+            <option value="AL">Alabama</option>
+            <option value="AK">Alaska</option>
+            <option value="AZ">Arizona</option>
+            <option value="AR">Arkansas</option>
+            <option value="CA">California</option>
+            <option value="CO">Colorado</option>
+            <option value="CT">Connecticut</option>
+            <option value="DE">Delaware</option>
+            <option value="DC">Washington, D.C.</option>
+            <option value="FL">Florida</option>
+            <option value="GA">Georgia</option>
+            <option value="HI">Hawaii</option>
+            <option value="ID">Idaho</option>
+            <option value="IL">Illinois</option>
+            <option value="IN">Indiana</option>
+            <option value="IA">Iowa</option>
+            <option value="KS">Kansas</option>
+            <option value="KY">Kentucky</option>
+            <option value="LA">Louisiana</option>
+            <option value="ME">Maine</option>
+            <option value="MD">Maryland</option>
+            <option value="MA">Massachusetts</option>
+            <option value="MI">Michigan</option>
+            <option value="MN">Minnesota</option>
+            <option value="MS">Mississippi</option>
+            <option value="MO">Missouri</option>
+            <option value="MT">Montana</option>
+            <option value="NE">Nebraska</option>
+            <option value="NV">Nevada</option>
+            <option value="NH">New Hampshire</option>
+            <option value="NJ">New Jersey</option>
+            <option value="NM">New Mexico</option>
+            <option value="NY">New York</option>
+            <option value="NC">North Carolina</option>
+            <option value="ND">North Dakota</option>
+            <option value="OH">Ohio</option>
+            <option value="OK">Oklahoma</option>
+            <option value="OR">Oregon</option>
+            <option value="PA">Pennsylvania</option>
+            <option value="RI">Rhode Island</option>
+            <option value="SC">South Carolina</option>
+            <option value="SD">South Dakota</option>
+            <option value="TN">Tennessee</option>
+            <option value="TX">Texas</option>
+            <option value="UT">Utah</option>
+            <option value="VT">Vermont</option>
+            <option value="VA">Virginia</option>
+            <option value="WA">Washington</option>
+            <option value="WV">West Virginia</option>
+            <option value="WI">Wisconsin</option>
+            <option value="WY">Wyoming</option>
+          </select>
+          <select class="f-select" id="f-rat" aria-label="Minimum rating" onchange="applyFilters()">
+            <option value="">Any Rating</option>
+            <option value="4.5">4.5★ &amp; above</option>
+            <option value="4">4.0★ &amp; above</option>
+            <option value="3.5">3.5★ &amp; above</option>
+          </select>
+          <button class="f-reset" onclick="resetFilters()">Reset</button>
+        </div>
+      </div>
+
+      <nav class="cat-tabs" aria-label="Quick category tabs">
+        <button class="c-tab active" data-cat="" onclick="setTab(this,'')">All <span class="c-tab-n">18</span></button>
+        <button class="c-tab" data-cat="Food &amp; Restaurant" onclick="setTab(this,'Food &amp; Restaurant')">🍽️ Food <span class="c-tab-n">3</span></button>
+        <button class="c-tab" data-cat="Fashion &amp; Apparel" onclick="setTab(this,'Fashion &amp; Apparel')">👗 Fashion <span class="c-tab-n">2</span></button>
+        <button class="c-tab" data-cat="Health &amp; Wellness" onclick="setTab(this,'Health &amp; Wellness')">🌿 Wellness <span class="c-tab-n">2</span></button>
+        <button class="c-tab" data-cat="Technology" onclick="setTab(this,'Technology')">💻 Tech <span class="c-tab-n">2</span></button>
+        <button class="c-tab" data-cat="Beauty &amp; Personal Care" onclick="setTab(this,'Beauty &amp; Personal Care')">✨ Beauty <span class="c-tab-n">2</span></button>
+        <button class="c-tab" data-cat="Art &amp; Creative" onclick="setTab(this,'Art &amp; Creative')">🎨 Art <span class="c-tab-n">1</span></button>
+        <button class="c-tab" data-cat="Finance &amp; Legal" onclick="setTab(this,'Finance &amp; Legal')">⚖️ Finance <span class="c-tab-n">1</span></button>
+        <button class="c-tab" data-cat="Education &amp; Tutoring" onclick="setTab(this,'Education &amp; Tutoring')">📚 Education <span class="c-tab-n">1</span></button>
+        <button class="c-tab" data-cat="Freelancers" onclick="setTab(this,'Freelancers')">💼 Freelancers <span class="c-tab-n">2</span></button>
+        <button class="c-tab" data-cat="Handyman Services" onclick="setTab(this,'Handyman Services')">🔧 Handyman <span class="c-tab-n">2</span></button>
+      </nav>
+
+      <div class="listings-grid" id="grid" role="list" aria-label="Business listings"></div>
+      <nav class="pagination" id="pagination" aria-label="Listings pagination"></nav>
+    </div>
+  </main>
+
+  <!-- IMPACT -->
+  <section id="impact" class="section impact-section">
+    <div class="container">
+      <div class="impact-grid">
+        <div class="impact-text">
+          <p class="sec-label">Why it matters</p>
+          <h2 class="sec-title">Small businesses<br><em>power our economy</em></h2>
+          <p>Small businesses are the backbone of every thriving community. Real Black Wall Street makes them discoverable — from coast to coast.</p>
+          <div class="impact-bullets">
+            <div class="impact-bullet">
+              <div class="impact-bullet-icon">🌱</div>
+              <div class="impact-bullet-text">
+                <h4>More money stays in the community</h4>
+                <p>For every $100 spent at a small business, $68 stays in the community — compared to $43 at a national chain.</p>
+              </div>
+            </div>
+            <div class="impact-bullet">
+              <div class="impact-bullet-icon">🤝</div>
+              <div class="impact-bullet-text">
+                <h4>Verified &amp; authentic listings</h4>
+                <p>Every business on Real Black Wall Street is verified for authentic independent ownership — no chains, no pretense.</p>
+              </div>
+            </div>
+            <div class="impact-bullet">
+              <div class="impact-bullet-icon">📍</div>
+              <div class="impact-bullet-text">
+                <h4>Nationwide reach, community focus</h4>
+                <p>Search by state or browse every industry. Real Black Wall Street spans all 50 states and every niche.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="impact-stats-grid">
+          <div class="impact-stat-card">
+            <div class="i-num">$68</div>
+            <div class="i-lbl">Of every $100 spent at a small business stays in the community</div>
+          </div>
+          <div class="impact-stat-card">
+            <div class="i-num">99.9%</div>
+            <div class="i-lbl">Of all US businesses are small businesses</div>
+            <div class="i-sub">Source: U.S. Small Business Administration</div>
+          </div>
+          <div class="impact-stat-card">
+            <div class="i-num">46%</div>
+            <div class="i-lbl">Of private-sector workers are employed by small businesses</div>
+          </div>
+          <div class="impact-stat-card">
+            <div class="i-num">1 in 6</div>
+            <div class="i-lbl">Americans is self-employed or runs their own small business</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="logo">
+            <div class="logo-mark">B</div>
+            Real Black<span style="color:var(--sand)"> Wall Street</span>
+          </div>
+          <p>The definitive nationwide directory of small businesses. Discover, support, and amplify entrepreneurs building communities across all 50 states.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Directory</h4>
+          <ul class="footer-links">
+            <li><a href="#">All Businesses</a></li>
+            <li><a href="#">Food &amp; Restaurant</a></li>
+            <li><a href="#">Technology</a></li>
+            <li><a href="#">Freelancers</a></li>
+            <li><a href="#">Handyman Services</a></li>
+            <li><a href="#">Health &amp; Wellness</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <ul class="footer-links">
+            <li><a href="#">List Your Business</a></li>
+            <li><a href="#">Verification Process</a></li>
+            <li><a href="#">RSS Feed</a></li>
+            <li><a href="#">Sitemap</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul class="footer-links">
+            <li><a href="#">Our Mission</a></li>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Press</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Real Black Wall Street. Built with purpose.</span>
+        <div class="footer-bottom-links">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Accessibility</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</div><!-- /main-view -->
+
+<!-- DETAIL VIEW -->
+<div id="detail-view" aria-live="polite"></div>
+
+<!-- ── SUBMISSION MODAL ── -->
+<div class="modal-backdrop" id="submit-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h2 class="modal-title" id="modal-title">List Your Business</h2>
+        <p class="modal-subtitle">Join thousands of businesses on Real Black Wall Street. Free to list — verified within 48 hours.</p>
+      </div>
+      <button class="modal-close" onclick="closeSubmitModal()" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Success state -->
+      <div class="form-success" id="form-success">
+        <div class="success-icon">✓</div>
+        <h3>You're submitted!</h3>
+        <p>We'll review your listing and reach out within 48 hours to verify and publish your business.</p>
+        <button class="btn-submit" onclick="closeSubmitModal()">Back to Directory</button>
+      </div>
+
+      <!-- Form -->
+      <form id="submit-form" novalidate onsubmit="handleSubmit(event)">
+        <div class="form-grid">
+
+          <div class="f-section-label span2">Business Info</div>
+
+          <div class="field-grp span2">
+            <label class="field-lbl" for="f-biz-name">Business Name <span class="req">*</span></label>
+            <input class="f-inp" id="f-biz-name" type="text" placeholder="e.g. Nourish Kitchen Co." autocomplete="organization">
+            <span class="f-err-msg">Please enter your business name.</span>
+          </div>
+
+          <div class="field-grp">
+            <label class="field-lbl" for="f-biz-cat">Industry / Category <span class="req">*</span></label>
+            <select class="f-sel" id="f-biz-cat">
+              <option value="">Select a category</option>
+              <option>Food &amp; Restaurant</option>
+              <option>Fashion &amp; Apparel</option>
+              <option>Health &amp; Wellness</option>
+              <option>Technology</option>
+              <option>Beauty &amp; Personal Care</option>
+              <option>Art &amp; Creative</option>
+              <option>Finance &amp; Legal</option>
+              <option>Education &amp; Tutoring</option>
+              <option>Freelancers</option>
+              <option>Handyman Services</option>
+              <option>Other</option>
+            </select>
+            <span class="f-err-msg">Please select a category.</span>
+          </div>
+
+          <div class="field-grp">
+            <label class="field-lbl" for="f-biz-price">Price Range <span class="req">*</span></label>
+            <select class="f-sel" id="f-biz-price">
+              <option value="">Select price range</option>
+              <option value="$">$ — Budget-friendly</option>
+              <option value="$$">$$ — Moderate</option>
+              <option value="$$$">$$$ — Premium</option>
+              <option value="$$$$">$$$$ — Luxury</option>
+            </select>
+            <span class="f-err-msg">Please select a price range.</span>
+          </div>
+
+          <div class="field-grp span2">
+            <label class="field-lbl" for="f-biz-desc">Business Description <span class="req">*</span></label>
+            <textarea class="f-txt" id="f-biz-desc" placeholder="Tell us what makes your business unique — your story, specialties, and what customers can expect…"></textarea>
+            <span class="f-err-msg">Please add a description (at least 30 characters).</span>
+          </div>
+
+          <div class="f-section-label span2">Location</div>
+
+          <div class="field-grp">
+            <label class="field-lbl" for="f-biz-state">State <span class="req">*</span></label>
+            <select class="f-sel" id="f-biz-state">
+              <option value="">Select state</option>
+              <option value="AL">Alabama</option><option value="AK">Alaska</option>
+              <option value="AZ">Arizona</option><option value="AR">Arkansas</option>
+              <option value="CA">California</option><option value="CO">Colorado</option>
+              <option value="CT">Connecticut</option><option value="DE">Delaware</option>
+              <option value="DC">Washington, D.C.</option><option value="FL">Florida</option>
+              <option value="GA">Georgia</option><option value="HI">Hawaii</option>
+              <option value="ID">Idaho</option><option value="IL">Illinois</option>
+              <option value="IN">Indiana</option><option value="IA">Iowa</option>
+              <option value="KS">Kansas</option><option value="KY">Kentucky</option>
+              <option value="LA">Louisiana</option><option value="ME">Maine</option>
+              <option value="MD">Maryland</option><option value="MA">Massachusetts</option>
+              <option value="MI">Michigan</option><option value="MN">Minnesota</option>
+              <option value="MS">Mississippi</option><option value="MO">Missouri</option>
+              <option value="MT">Montana</option><option value="NE">Nebraska</option>
+              <option value="NV">Nevada</option><option value="NH">New Hampshire</option>
+              <option value="NJ">New Jersey</option><option value="NM">New Mexico</option>
+              <option value="NY">New York</option><option value="NC">North Carolina</option>
+              <option value="ND">North Dakota</option><option value="OH">Ohio</option>
+              <option value="OK">Oklahoma</option><option value="OR">Oregon</option>
+              <option value="PA">Pennsylvania</option><option value="RI">Rhode Island</option>
+              <option value="SC">South Carolina</option><option value="SD">South Dakota</option>
+              <option value="TN">Tennessee</option><option value="TX">Texas</option>
+              <option value="UT">Utah</option><option value="VT">Vermont</option>
+              <option value="VA">Virginia</option><option value="WA">Washington</option>
+              <option value="WV">West Virginia</option><option value="WI">Wisconsin</option>
+              <option value="WY">Wyoming</option>
+            </select>
+            <span class="f-err-msg">Please select your state.</span>
+          </div>
+
+          <div class="field-grp">
+            <label class="field-lbl" for="f-biz-city">City / Neighborhood <span class="req">*</span></label>
+            <input class="f-inp" id="f-biz-city" type="text" placeholder="e.g. West End, Atlanta">
+            <span class="f-err-msg">Please enter your city or neighborhood.</span>
+          </div>
+
+          <div class="field-grp span2">
+            <label class="field-lbl" for="f-biz-addr">Street Address</label>
+            <input class="f-inp" id="f-biz-addr" type="text" placeholder="e.g. 745 Lee St SW, Atlanta, GA 30310" autocomplete="street-address">
+          </div>
+
+          <div class="f-section-label span2">Owner &amp; Contact</div>
+
+          <div class="field-grp">
+            <label class="field-lbl" for="f-biz-owner">Owner Name <span class="req">*</span></label>
+            <input class="f-inp" id="f-biz-owner" type="text" placeholder="Full name" autocomplete="name">
+            <span class="f-err-msg">Please enter the owner's name.</span>
+          </div>
+
+          <div class="field-grp">
+            <label class="field-lbl" for="f-biz-email">Email <span class="req">*</span></label>
+            <input class="f-inp" id="f-biz-email" type="email" placeholder="hello@yourbusiness.com" autocomplete="email">
+            <span class="f-err-msg">Please enter a valid email address.</span>
+          </div>
+
+          <div class="field-grp">
+            <label class="field-lbl" for="f-biz-phone">Phone</label>
+            <input class="f-inp" id="f-biz-phone" type="tel" placeholder="+1 (555) 000-0000" autocomplete="tel">
+          </div>
+
+          <div class="field-grp">
+            <label class="field-lbl" for="f-biz-web">Website</label>
+            <input class="f-inp" id="f-biz-web" type="text" placeholder="yourbusiness.com">
+          </div>
+
+          <div class="field-grp span2">
+            <label class="field-lbl" for="f-biz-hours">Hours of Operation</label>
+            <input class="f-inp" id="f-biz-hours" type="text" placeholder="e.g. Mon–Fri 9am–6pm, Sat 10am–4pm">
+          </div>
+
+        </div><!-- /form-grid -->
+
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" onclick="closeSubmitModal()">Cancel</button>
+          <button type="submit" class="btn-submit" id="btn-submit-main">Submit Listing →</button>
+        </div>
+      </form>
+
+    </div><!-- /modal-body -->
+  </div><!-- /modal -->
+</div><!-- /modal-backdrop -->
+
+<script>
+/* ── DATA ── */
+const LISTINGS = [
+  {
+    id:1,slug:"nourish-kitchen-co",name:"Nourish Kitchen Co.",category:"Food & Restaurant",
+    ownerName:"Chef Tamara Williams",city:"Atlanta, GA",state:"GA",location:"West End, Atlanta",
+    desc:"A farm-to-table soul food kitchen rooted in West African and Southern tradition. Chef Tamara sources ingredients from local Georgia farms, crafting dishes that are simultaneously ancestral and modern. The Sunday brunch line wraps around the block for good reason.",
+    shortDesc:"Farm-to-table soul food rooted in West African and Southern tradition, sourcing from local Georgia farms.",
+    tags:["Soul Food","Farm-to-Table","Sunday Brunch","Catering"],
+    rating:4.9,reviews:687,price:"$$",
+    hours:"Tue–Sun 11am–9pm",phone:"+1 (404) 555-0182",email:"tamara@nourishkitchen.co",
+    website:"nourishkitchen.co",address:"745 Lee St SW, Atlanta, GA 30310",
+    lat:33.7490,lng:-84.4005,
+    image:"https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=80",
+    imageAlt:"Nourish Kitchen Co. vibrant dining room with local art",featured:true
+  },
+  {
+    id:2,slug:"sol-thread-studio",name:"Sol Thread Studio",category:"Fashion & Apparel",
+    ownerName:"Isabella Morales",city:"Los Angeles, CA",state:"CA",location:"East LA",
+    desc:"An independent fashion label hand-printing bold graphic tees, hoodies, and woven accessories inspired by folk art and contemporary culture. Every garment is screen-printed in-house in a zero-waste studio.",
+    shortDesc:"Independent fashion label hand-printing bold graphic tees and accessories in a zero-waste studio.",
+    tags:["Screen Print","Sustainable","Graphic Apparel","Handmade"],
+    rating:4.8,reviews:334,price:"$$",
+    hours:"Mon–Sat 10am–6pm",phone:"+1 (323) 555-0241",email:"hola@solthread.com",
+    website:"solthread.com",address:"3212 César Chávez Ave, Los Angeles, CA 90063",
+    lat:34.0219,lng:-118.1817,
+    image:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
+    imageAlt:"Sol Thread Studio colorful garments and screen printing equipment",featured:true
+  },
+  {
+    id:3,slug:"pillar-code-labs",name:"Pillar Code Labs",category:"Technology",
+    ownerName:"Marcus & Deja Thompson",city:"Washington, DC",state:"DC",location:"Shaw, DC",
+    desc:"A software consultancy specializing in civic tech, accessibility-first web development, and cloud infrastructure for nonprofits and government agencies. Founded by two Howard University alumni who came up through military service.",
+    shortDesc:"Software consultancy building accessible civic tech and cloud infrastructure for nonprofits.",
+    tags:["Civic Tech","Accessibility","Web Dev","Nonprofits","Cloud"],
+    rating:4.9,reviews:142,price:"$$$",
+    hours:"Mon–Fri 9am–5pm",phone:"+1 (202) 555-0368",email:"hello@pillarcode.io",
+    website:"pillarcode.io",address:"1520 9th St NW, Washington, DC 20001",
+    lat:38.9132,lng:-77.0209,
+    image:"https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&q=80",
+    imageAlt:"Pillar Code Labs team collaborating in modern DC office",featured:false
+  },
+  {
+    id:4,slug:"golden-roots-wellness",name:"Golden Roots Wellness",category:"Health & Wellness",
+    ownerName:"Dr. Aisha Bankole",city:"Chicago, IL",state:"IL",location:"Bronzeville, Chicago",
+    desc:"A holistic wellness center grounded in herbalism and integrative medicine. Dr. Aisha Bankole, a naturopathic doctor and licensed acupuncturist, offers a full spectrum of services from herbal consultations to massage therapy to community wellness workshops.",
+    shortDesc:"Holistic wellness center grounded in herbalism and integrative medicine led by a naturopathic doctor.",
+    tags:["Herbalism","Acupuncture","Holistic","Community Workshops"],
+    rating:4.8,reviews:419,price:"$$",
+    hours:"Mon–Sat 9am–7pm",phone:"+1 (312) 555-0597",email:"hello@goldenrootswellness.com",
+    website:"goldenrootswellness.com",address:"4727 S King Dr, Chicago, IL 60615",
+    lat:41.8075,lng:-87.6155,
+    image:"https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600&q=80",
+    imageAlt:"Golden Roots Wellness serene interior with plants and natural light",featured:true
+  },
+  {
+    id:5,slug:"three-crowns-bakery",name:"Three Crowns Bakery",category:"Food & Restaurant",
+    ownerName:"Adaeze Okonkwo",city:"Houston, TX",state:"TX",location:"Third Ward, Houston",
+    desc:"This bakery fuses Nigerian pastry tradition with Houston's bold flavor identity. Signature chin-chin, puff-puff, and a smash-hit Nigerian-spiced croissant that sold out for 47 consecutive weekends.",
+    shortDesc:"Nigerian-inspired bakery fusing traditional pastry with Houston bold flavor — famous for spiced croissants.",
+    tags:["Nigerian","Pastry","Puff-Puff","Catering","Weekend Pop-up"],
+    rating:4.9,reviews:528,price:"$",
+    hours:"Wed–Sun 7am–2pm",phone:"+1 (713) 555-0714",email:"hello@threecrownsbakery.com",
+    website:"threecrownsbakery.com",address:"3214 Dowling St, Houston, TX 77004",
+    lat:29.7404,lng:-95.3698,
+    image:"https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=80",
+    imageAlt:"Three Crowns Bakery colorful pastry display case",featured:true
+  },
+  {
+    id:6,slug:"hana-bloom-botanicals",name:"Hana Bloom Botanicals",category:"Beauty & Personal Care",
+    ownerName:"Keiko Tanaka",city:"New York, NY",state:"NY",location:"Ridgewood, Queens",
+    desc:"An apothecary creating small-batch, plant-based skincare drawing from Japanese forest bathing and Korean herbal medicine. Every product is handcrafted, fragrance-free, and formulated for sensitive skin.",
+    shortDesc:"Apothecary making plant-based skincare from Japanese and Korean herbal traditions — small batch, fragrance-free.",
+    tags:["Skincare","Apothecary","Korean Herbalism","Small Batch"],
+    rating:4.7,reviews:283,price:"$$$",
+    hours:"Tue–Sun 11am–7pm",phone:"+1 (718) 555-0139",email:"keiko@hanabloombotanicals.com",
+    website:"hanabloombotanicals.com",address:"60-14 Forest Ave, Ridgewood, NY 11385",
+    lat:40.7021,lng:-73.9028,
+    image:"https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=600&q=80",
+    imageAlt:"Hana Bloom Botanicals minimalist apothecary with glass bottles",featured:false
+  },
+  {
+    id:7,slug:"libertas-financial-group",name:"Libertas Financial Group",category:"Finance & Legal",
+    ownerName:"Monique Hayes, CFP",city:"Miami, FL",state:"FL",location:"Liberty City, Miami",
+    desc:"A financial planning and wealth-building firm serving first-generation wealth builders. Monique Hayes, a Certified Financial Planner, offers tax strategy, retirement planning, and financial literacy workshops in English and Spanish.",
+    shortDesc:"Financial planning firm serving first-generation wealth builders with bilingual tax strategy and retirement planning.",
+    tags:["Financial Planning","Wealth Building","Bilingual","Tax Strategy"],
+    rating:4.8,reviews:167,price:"$$$",
+    hours:"Mon–Fri 9am–6pm",phone:"+1 (305) 555-0843",email:"monique@libertasfinancial.com",
+    website:"libertasfinancial.com",address:"6301 NW 7th Ave, Miami, FL 33150",
+    lat:25.8536,lng:-80.2006,
+    image:"https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&q=80",
+    imageAlt:"Libertas Financial Group modern office with consultation tables",featured:false
+  },
+  {
+    id:8,slug:"kinfolk-apparel",name:"Kinfolk Apparel",category:"Fashion & Apparel",
+    ownerName:"Darius Cole",city:"Atlanta, GA",state:"GA",location:"Sweet Auburn, Atlanta",
+    desc:"Atlanta-born streetwear brand rooted in cultural history and heritage. Darius Cole designs each drop around a specific historical chapter, rendered in contemporary silhouettes with premium organic cotton.",
+    shortDesc:"Atlanta streetwear brand designing each drop around a chapter of cultural history, in premium organic cotton.",
+    tags:["Streetwear","Organic Cotton","Limited Drops","Heritage"],
+    rating:4.7,reviews:521,price:"$$",
+    hours:"Mon–Sat 11am–7pm",phone:"+1 (404) 555-0426",email:"hello@kinfolkapparel.com",
+    website:"kinfolkapparel.com",address:"248 Auburn Ave NE, Atlanta, GA 30303",
+    lat:33.7546,lng:-84.3776,
+    image:"https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=600&q=80",
+    imageAlt:"Kinfolk Apparel curated clothing display in brick storefront",featured:false
+  },
+  {
+    id:9,slug:"verdant-acupuncture",name:"Verdant Acupuncture & Herbs",category:"Health & Wellness",
+    ownerName:"Dr. Linh Nguyen, L.Ac",city:"Houston, TX",state:"TX",location:"Midtown Houston",
+    desc:"A Traditional Chinese Medicine clinic offering acupuncture, cupping, herbal medicine, and community acupuncture sliding-scale sessions. Dr. Linh Nguyen was trained in both Hanoi and at AOMA Graduate School of Integrative Medicine.",
+    shortDesc:"TCM clinic offering acupuncture, cupping, and sliding-scale community sessions.",
+    tags:["Acupuncture","TCM","Cupping","Sliding Scale"],
+    rating:4.9,reviews:362,price:"$$",
+    hours:"Mon,Wed,Fri 9am–6pm; Sat 10am–4pm",phone:"+1 (713) 555-0295",email:"info@verdantacupuncture.com",
+    website:"verdantacupuncture.com",address:"3909 Main St, Houston, TX 77002",
+    lat:29.7340,lng:-95.3698,
+    image:"https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80",
+    imageAlt:"Verdant Acupuncture calm treatment room with bamboo decor",featured:false
+  },
+  {
+    id:10,slug:"colorwork-collective",name:"Colorwork Collective",category:"Art & Creative",
+    ownerName:"Nia Osei-Bonsu",city:"New York, NY",state:"NY",location:"Bed-Stuy, Brooklyn",
+    desc:"A creative studio offering brand identity, illustration, mural commissions, and editorial design to businesses prioritizing authentic cultural storytelling. Work has appeared in The New York Times, Vogue, and dozens of nonprofits worldwide.",
+    shortDesc:"Brand identity and illustration studio whose work has appeared in NYT and Vogue.",
+    tags:["Brand Identity","Illustration","Murals","Editorial"],
+    rating:4.8,reviews:203,price:"$$$",
+    hours:"By Appointment",phone:"+1 (646) 555-0772",email:"nia@colorworkcollective.com",
+    website:"colorworkcollective.com",address:"764 Jefferson Ave, Brooklyn, NY 11221",
+    lat:40.6840,lng:-73.9249,
+    image:"https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&q=80",
+    imageAlt:"Colorwork Collective studio with vibrant murals and illustration work",featured:true
+  },
+  {
+    id:11,slug:"tecla-technology-solutions",name:"Tecla Technology Solutions",category:"Technology",
+    ownerName:"Rosa Méndez",city:"Chicago, IL",state:"IL",location:"Pilsen, Chicago",
+    desc:"An IT managed services firm providing cybersecurity, cloud migration, and tech support for small businesses — in both English and Spanish. Rosa Méndez started Tecla after recognizing the digital divide leaving many small business owners without infrastructure to compete.",
+    shortDesc:"IT firm providing bilingual cybersecurity and cloud services to small businesses.",
+    tags:["IT Services","Cybersecurity","Bilingual","Cloud","SMB"],
+    rating:4.6,reviews:119,price:"$$",
+    hours:"Mon–Fri 8am–6pm",phone:"+1 (312) 555-0584",email:"rosa@teclatech.com",
+    website:"teclatech.com",address:"1801 S Blue Island Ave, Chicago, IL 60608",
+    lat:41.8570,lng:-87.6599,
+    image:"https://images.unsplash.com/photo-1580894732444-8ecded7900cd?w=600&q=80",
+    imageAlt:"Tecla Technology Solutions office with team at monitors",featured:false
+  },
+  {
+    id:12,slug:"mahogany-beauty-lounge",name:"Mahogany Beauty Lounge",category:"Beauty & Personal Care",
+    ownerName:"Jasmine Carter",city:"Atlanta, GA",state:"GA",location:"Decatur, Atlanta",
+    desc:"A full-service luxury beauty lounge specializing in natural hair care, braiding, locs, and holistic beauty rituals. Jasmine Carter opened Mahogany after 15 years of building a loyal clientele. Appointments open 6 weeks out — that's how good it is.",
+    shortDesc:"Luxury beauty lounge specializing in natural hair, braiding, and locs — appointments book 6 weeks out.",
+    tags:["Natural Hair","Braiding","Locs","Luxury"],
+    rating:4.9,reviews:864,price:"$$$",
+    hours:"Tue–Sat 9am–7pm",phone:"+1 (404) 555-0913",email:"book@mahoganybeauty.com",
+    website:"mahoganybeauty.com",address:"103 E Ponce de Leon Ave, Decatur, GA 30030",
+    lat:33.7750,lng:-84.2967,
+    image:"https://images.unsplash.com/photo-1562322140-8baeececf3df?w=600&q=80",
+    imageAlt:"Mahogany Beauty Lounge elegant salon interior",featured:true
+  },
+  {
+    id:13,slug:"village-roots-tutoring",name:"Village Roots Tutoring",category:"Education & Tutoring",
+    ownerName:"Dr. Keturah Moore",city:"Washington, DC",state:"DC",location:"Anacostia, DC",
+    desc:"An education company providing culturally responsive tutoring, SAT prep, and college counseling to students from Title I schools in Southeast DC. Dr. Moore leads a team of 18 educators, all from the communities they serve.",
+    shortDesc:"Culturally responsive tutoring and college counseling for Title I students in Southeast DC.",
+    tags:["Tutoring","SAT Prep","College Counseling","Title I"],
+    rating:4.8,reviews:247,price:"$$",
+    hours:"Mon–Fri 3pm–8pm, Sat 9am–2pm",phone:"+1 (202) 555-0124",email:"dr.moore@villageroots.edu",
+    website:"villageroots.edu",address:"2107 Good Hope Rd SE, Washington, DC 20020",
+    lat:38.8614,lng:-76.9855,
+    image:"https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=600&q=80",
+    imageAlt:"Village Roots Tutoring bright classroom with students",featured:false
+  },
+  {
+    id:14,slug:"mesa-verde-taqueria",name:"Mesa Verde Taqueria",category:"Food & Restaurant",
+    ownerName:"Carlos & Elena Reyes",city:"Los Angeles, CA",state:"CA",location:"Boyle Heights, LA",
+    desc:"A family-run taqueria serving Oaxacan-inspired street tacos made from masa ground in-house from heirloom corn. Carlos and Elena opened Mesa Verde after years of weekend pop-ups in Boyle Heights. The mole negro here is a 3-day labor of love.",
+    shortDesc:"Family-run Oaxacan taqueria with masa ground from heirloom corn and a legendary 3-day mole negro.",
+    tags:["Oaxacan","Tacos","Heirloom Corn","Family-Run","Mole"],
+    rating:4.8,reviews:712,price:"$",
+    hours:"Daily 10am–10pm",phone:"+1 (323) 555-0648",email:"hola@mesaverdetaqueria.com",
+    website:"mesaverdetaqueria.com",address:"1718 E César Chávez Ave, Los Angeles, CA 90033",
+    lat:34.0498,lng:-118.2065,
+    image:"https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&q=80",
+    imageAlt:"Mesa Verde Taqueria colorful interior with handmade tortillas",featured:false
+  },
+  {
+    id:15,slug:"pixel-fox-creative",name:"Pixel Fox Creative",category:"Freelancers",
+    ownerName:"Jordan Kim",city:"New York, NY",state:"NY",location:"Brooklyn, NY",
+    desc:"A freelance motion designer and brand strategist with 8 years of experience crafting visual identities for startups and established brands. Specializes in logo animation, social content, and brand style guides. Available for short-term projects and ongoing retainers.",
+    shortDesc:"Freelance motion designer and brand strategist creating visual identities and animated content for brands.",
+    tags:["Motion Design","Branding","Logo Animation","Social Content"],
+    rating:4.8,reviews:94,price:"$$",
+    hours:"By Appointment",phone:"+1 (917) 555-0334",email:"hi@pixelfoxcreative.com",
+    website:"pixelfoxcreative.com",address:"Brooklyn, NY 11201",
+    lat:40.6892,lng:-73.9442,
+    image:"https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80",
+    imageAlt:"Pixel Fox Creative home studio with design work displayed",featured:false
+  },
+  {
+    id:16,slug:"clara-writes",name:"Clara Writes",category:"Freelancers",
+    ownerName:"Clara Nguyen",city:"Chicago, IL",state:"IL",location:"Logan Square, Chicago",
+    desc:"Award-winning freelance copywriter and content strategist specializing in long-form journalism, brand voice development, and SEO-driven website copy. Clara has written for national publications and helped 60+ small businesses find their voice online.",
+    shortDesc:"Freelance copywriter and content strategist helping brands find their voice with compelling copy.",
+    tags:["Copywriting","Content Strategy","SEO","Brand Voice"],
+    rating:4.9,reviews:87,price:"$$",
+    hours:"Mon–Fri 9am–5pm",phone:"+1 (773) 555-0217",email:"clara@clarawrites.com",
+    website:"clarawrites.com",address:"Logan Square, Chicago, IL 60647",
+    lat:41.9215,lng:-87.7020,
+    image:"https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=80",
+    imageAlt:"Clara Writes desk with laptop and notebooks",featured:false
+  },
+  {
+    id:17,slug:"apex-home-repair",name:"Apex Home Repair",category:"Handyman Services",
+    ownerName:"Mike Patterson",city:"Atlanta, GA",state:"GA",location:"Buckhead, Atlanta",
+    desc:"A licensed and insured handyman service handling everything from drywall repair and tile installation to deck building and smart home setup. Mike has 20 years of trade experience and a reputation for showing up on time and getting it done right the first time.",
+    shortDesc:"Licensed handyman for drywall, tile, decks, and smart home installs — 20 years experience, always on time.",
+    tags:["Drywall","Tile","Deck Building","Smart Home","Repairs"],
+    rating:4.9,reviews:312,price:"$$",
+    hours:"Mon–Sat 7am–6pm",phone:"+1 (404) 555-0178",email:"mike@apexhomerepair.com",
+    website:"apexhomerepair.com",address:"Buckhead, Atlanta, GA 30305",
+    lat:33.8403,lng:-84.3677,
+    image:"https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&q=80",
+    imageAlt:"Apex Home Repair handyman installing fixtures",featured:false
+  },
+  {
+    id:18,slug:"greenleaf-property-services",name:"Greenleaf Property Services",category:"Handyman Services",
+    ownerName:"Tom & Sarah Greene",city:"Houston, TX",state:"TX",location:"Midtown Houston",
+    desc:"Family-run property maintenance company offering plumbing fixes, electrical repairs, painting, and seasonal maintenance for homeowners and property managers. With a team of 6 skilled tradespeople, Greenleaf handles jobs of any size with a 100% satisfaction guarantee.",
+    shortDesc:"Family-run property maintenance covering plumbing, electrical, painting, and seasonal upkeep.",
+    tags:["Plumbing","Electrical","Painting","Property Maintenance"],
+    rating:4.7,reviews:241,price:"$$",
+    hours:"Mon–Fri 8am–5pm, Sat 8am–12pm",phone:"+1 (713) 555-0493",email:"hello@greenleafproperty.com",
+    website:"greenleafproperty.com",address:"Midtown Houston, TX 77002",
+    lat:29.7340,lng:-95.3698,
+    image:"https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=600&q=80",
+    imageAlt:"Greenleaf Property Services team at work on home repairs",featured:false
+  }
+];
+
+/* ── GALAXY BACKGROUND ── */
+(function initGalaxy() {
+  const canvas = document.getElementById('galaxy-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  let W, H, stars = [], shooters = [];
+  let time = 0;
+  let mx = 0.5, my = 0.5, tmx = 0.5, tmy = 0.5;
+
+  function resize() {
+    W = canvas.width  = canvas.offsetWidth  || window.innerWidth;
+    H = canvas.height = canvas.offsetHeight || window.innerHeight;
+  }
+
+  function buildStars() {
+    stars = [];
+    const layers = [220, 100, 45];
+    layers.forEach((count, layer) => {
+      for (let i = 0; i < count; i++) {
+        const hRoll = Math.random();
+        stars.push({
+          x: Math.random(), y: Math.random(),
+          size: 0.35 + layer * 0.55 + Math.random() * (0.4 + layer * 0.65),
+          base: 0.25 + layer * 0.2 + Math.random() * 0.3,
+          spd: 0.6 + Math.random() * 2.2,
+          ph: Math.random() * Math.PI * 2,
+          layer,
+          hue: hRoll < 0.18 ? 210 + Math.random()*70 : hRoll < 0.35 ? 40+Math.random()*20 : 0,
+          glow: Math.random() < 0.12
+        });
+      }
+    });
+  }
+
+  const NEBULAE = [
+    {x:0.22,y:0.32,r:0.28,c:[75,35,160]},
+    {x:0.78,y:0.62,r:0.22,c:[28,55,155]},
+    {x:0.50,y:0.18,r:0.18,c:[115,28,95]},
+    {x:0.12,y:0.72,r:0.16,c:[18,75,118]},
+    {x:0.65,y:0.85,r:0.20,c:[55,100,60]},
+  ];
+
+  function render() {
+    if (!W || !H) return;
+    time += 0.007;
+    mx += (tmx - mx) * 0.025;
+    my += (tmy - my) * 0.025;
+
+    // Deep space background
+    const bg = ctx.createRadialGradient(W*0.42, H*0.38, 0, W*0.5, H*0.5, Math.max(W,H)*0.9);
+    bg.addColorStop(0,  '#0E0A20');
+    bg.addColorStop(0.45,'#080613');
+    bg.addColorStop(1,  '#030208');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Nebulae
+    NEBULAE.forEach(n => {
+      const nx = n.x * W + (mx - 0.5) * 18;
+      const ny = n.y * H + (my - 0.5) * 12;
+      const nr = n.r * Math.max(W, H);
+      const [r,g,b] = n.c;
+      const grd = ctx.createRadialGradient(nx, ny, 0, nx, ny, nr);
+      grd.addColorStop(0,   `rgba(${r},${g},${b},0.13)`);
+      grd.addColorStop(0.55,`rgba(${r},${g},${b},0.05)`);
+      grd.addColorStop(1,   'rgba(0,0,0,0)');
+      ctx.fillStyle = grd;
+      ctx.fillRect(0, 0, W, H);
+    });
+
+    // Galactic core
+    const cx = W*(0.5+(mx-0.5)*0.015), cy = H*(0.44+(my-0.5)*0.015);
+    const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, W*0.32);
+    core.addColorStop(0,   'rgba(155,115,255,0.07)');
+    core.addColorStop(0.35,'rgba(95,75,200,0.04)');
+    core.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.fillStyle = core;
+    ctx.fillRect(0, 0, W, H);
+
+    // Stars
+    stars.forEach(s => {
+      const px = s.x * W + (mx - 0.5) * s.layer * 9;
+      const py = s.y * H + (my - 0.5) * s.layer * 7;
+      const twinkle = 0.5 + 0.5 * Math.sin(time * s.spd + s.ph);
+      const alpha = s.base * (0.55 + 0.45 * twinkle);
+      const sz = s.size * (0.88 + 0.12 * twinkle);
+
+      if (s.glow && sz > 1) {
+        const gr = sz * 5.5;
+        const glow = ctx.createRadialGradient(px, py, 0, px, py, gr);
+        glow.addColorStop(0, `hsla(${s.hue||220},70%,92%,${alpha*0.38})`);
+        glow.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(px, py, gr, 0, Math.PI*2);
+        ctx.fill();
+      }
+
+      ctx.fillStyle = `hsla(${s.hue},${s.hue?65:0}%,95%,${alpha})`;
+      ctx.beginPath();
+      ctx.arc(px, py, Math.max(sz, 0.3), 0, Math.PI*2);
+      ctx.fill();
+    });
+
+    // Shooting stars
+    if (Math.random() < 0.004 && shooters.length < 3) {
+      shooters.push({
+        x: Math.random()*0.65, y: Math.random()*0.45,
+        len: 0.06 + Math.random()*0.09,
+        spd: 0.0035 + Math.random()*0.004,
+        angle: Math.PI/4 + (Math.random()-0.5)*0.35,
+        prog: 0
+      });
+    }
+    shooters = shooters.filter(s => s.prog < 1);
+    shooters.forEach(s => {
+      s.prog += s.spd;
+      const x1 = s.x*W + Math.cos(s.angle)*s.prog*s.len*W;
+      const y1 = s.y*H + Math.sin(s.angle)*s.prog*s.len*H;
+      const tl = s.len*W*0.28;
+      const x0 = x1 - Math.cos(s.angle)*tl;
+      const y0 = y1 - Math.sin(s.angle)*tl;
+      const a = s.prog < 0.5 ? s.prog*2 : (1-s.prog)*2;
+      const sg = ctx.createLinearGradient(x0,y0,x1,y1);
+      sg.addColorStop(0,'rgba(255,255,255,0)');
+      sg.addColorStop(1,`rgba(255,255,255,${a*0.88})`);
+      ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1);
+      ctx.strokeStyle = sg; ctx.lineWidth = 1.5; ctx.stroke();
+    });
+
+    requestAnimationFrame(render);
+  }
+
+  window.addEventListener('resize', () => { resize(); });
+  window.addEventListener('mousemove', e => {
+    tmx = e.clientX / window.innerWidth;
+    tmy = e.clientY / window.innerHeight;
+  });
+
+  resize();
+  buildStars();
+  render();
+})();
+
+/* ── HEADER SCROLL ── */
+window.addEventListener('scroll', () => {
+  document.getElementById('site-header').classList.toggle('scrolled', scrollY > 20);
+});
+
+function scrollToEl(id) {
+  const el = document.querySelector(id);
+  if (el) el.scrollIntoView({behavior:'smooth'});
+}
+
+/* ── STARS RENDER ── */
+function stars(r) {
+  let s = '';
+  for (let i = 1; i <= 5; i++) s += `<span class="star${i<=Math.round(r)?'':' e'}">★</span>`;
+  return s;
+}
+
+/* ── CARD ── */
+function card(biz, idx) {
+  return `
+<article class="biz-card${biz.featured?' featured':''}"
+  role="listitem"
+  onclick="showDetail(${biz.id})"
+  itemscope itemtype="https://schema.org/LocalBusiness"
+  style="transition-delay:${(idx % PER)*0.06}s">
+  <div class="card-img-wrap" data-src="${biz.image}&auto=format&w=600">
+    <div class="img-blur" style="background-image:url('${biz.image}&w=20&blur=200&auto=format')"></div>
+    <img class="lazy-img" data-src="${biz.image}&auto=format&w=600" alt="${biz.imageAlt}" itemprop="image">
+    <div class="card-local-badge">
+      <div class="local-dot"></div>
+      Independently Owned
+    </div>
+    <div class="card-rating-pill" itemprop="aggregateRating" itemscope itemtype="https://schema.org/AggregateRating">
+      <span itemprop="ratingValue">${biz.rating}</span>
+      <meta itemprop="reviewCount" content="${biz.reviews}">
+    </div>
+  </div>
+  <div class="card-body">
+    <p class="card-cat" itemprop="additionalType">${biz.category}</p>
+    <h3 class="card-title" itemprop="name">${biz.name}</h3>
+    <p class="card-desc" itemprop="description">${biz.shortDesc}</p>
+    <div class="card-footer">
+      <div class="card-loc" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span itemprop="addressLocality">${biz.location}</span>
+      </div>
+      <div class="card-tags">
+        ${biz.tags.slice(0,2).map(t=>`<span class="card-tag">${t}</span>`).join('')}
+      </div>
+    </div>
+  </div>
+</article>`;
+}
+
+/* ── STATE & GRID ── */
+let visible = [...LISTINGS];
+let page = 1;
+const PER = 9;
+let activeCat = '', activeOwn = '';
+
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  if (!grid) return;
+  const sl = visible.slice((page-1)*PER, page*PER);
+  grid.innerHTML = sl.length
+    ? sl.map((b,i) => card(b,i)).join('')
+    : `<div style="grid-column:1/-1;text-align:center;padding:80px 20px;color:var(--stone)">
+        <div style="font-size:2.5rem;margin-bottom:16px">🌱</div>
+        <p>No businesses match your filters. Try resetting.</p>
+       </div>`;
+  document.getElementById('result-count').textContent = visible.length;
+  renderPagination();
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const card = e.target;
+      card.classList.add('in-view');
+      // Blur-up: load real image when card enters viewport
+      const wrap = card.querySelector('.card-img-wrap');
+      const img  = card.querySelector('.lazy-img');
+      if (img && img.dataset.src && !img.src) {
+        const real = new Image();
+        real.onload = () => { img.src = img.dataset.src; wrap.classList.add('img-loaded'); };
+        real.src = img.dataset.src;
+      }
+      io.unobserve(card);
+    });
+  }, {threshold:0.05, rootMargin:'100px'});
+  grid.querySelectorAll('.biz-card').forEach(c => io.observe(c));
+}
+
+/* ── PAGINATION ── */
+function renderPagination() {
+  const pag = document.getElementById('pagination');
+  if (!pag) return;
+  const tot = Math.ceil(visible.length / PER);
+  if (tot <= 1) { pag.innerHTML=''; return; }
+  let h = `<button class="pg-btn" onclick="goPage(${page-1})" ${page===1?'disabled':''} aria-label="Previous">‹</button>`;
+  for (let i = 1; i <= tot; i++) {
+    if (i===1||i===tot||Math.abs(i-page)<=1) {
+      h += `<button class="pg-btn${i===page?' active':''}" onclick="goPage(${i})" aria-label="Page ${i}">${i}</button>`;
+    } else if (Math.abs(i-page)===2) {
+      h += `<span class="pg-ellipsis">…</span>`;
+    }
+  }
+  h += `<button class="pg-btn" onclick="goPage(${page+1})" ${page===tot?'disabled':''} aria-label="Next">›</button>`;
+  pag.innerHTML = h;
+}
+function goPage(p) {
+  page = p; renderGrid();
+  document.getElementById('listings').scrollIntoView({behavior:'smooth'});
+}
+
+/* ── FILTERS ── */
+function applyFilters() {
+  const text  = (document.getElementById('f-text')?.value||'').toLowerCase();
+  const cat   = document.getElementById('f-cat')?.value || activeCat;
+  const state = document.getElementById('f-state')?.value || '';
+  const minR  = parseFloat(document.getElementById('f-rat')?.value) || 0;
+  visible = LISTINGS.filter(b => {
+    const ms = !text  || b.name.toLowerCase().includes(text) || b.desc.toLowerCase().includes(text) || b.tags.some(t=>t.toLowerCase().includes(text));
+    const mc = !cat   || b.category === cat || b.category === cat.replace('&amp;','&');
+    const ml = !state || b.state === state;
+    const mr = !minR  || b.rating >= minR;
+    return ms && mc && ml && mr;
+  });
+  page = 1; renderGrid();
+}
+function resetFilters() {
+  ['f-text','f-cat','f-state','f-rat'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  document.querySelectorAll('.c-tab').forEach(t => t.classList.toggle('active', t.dataset.cat===''));
+  activeCat = ''; visible = [...LISTINGS]; page = 1; renderGrid();
+}
+function setTab(el, cat) {
+  document.querySelectorAll('.c-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active'); activeCat = cat;
+  if (document.getElementById('f-cat')) document.getElementById('f-cat').value = cat;
+  applyFilters();
+}
+function filterByCategory(cat) {
+  goHome();
+  setTimeout(() => {
+    activeCat = cat;
+    document.querySelectorAll('.c-tab').forEach(t => t.classList.toggle('active', t.dataset.cat===cat));
+    if (document.getElementById('f-cat')) document.getElementById('f-cat').value = cat;
+    applyFilters();
+    document.getElementById('listings').scrollIntoView({behavior:'smooth'});
+  }, 80);
+}
+function qFilter(cat) {
+  goHome();
+  setTimeout(() => {
+    activeCat = cat;
+    document.querySelectorAll('.c-tab').forEach(t => t.classList.toggle('active', t.dataset.cat===cat));
+    if (document.getElementById('f-cat')) document.getElementById('f-cat').value = cat;
+    applyFilters();
+    document.getElementById('listings').scrollIntoView({behavior:'smooth'});
+  }, 80);
+}
+function handleHeroSearch(e) {
+  e.preventDefault();
+  const q   = document.getElementById('hero-q').value;
+  const cat = document.getElementById('hero-cat').value;
+  goHome();
+  setTimeout(() => {
+    if (q   && document.getElementById('f-text')) document.getElementById('f-text').value = q;
+    if (cat && document.getElementById('f-cat'))  document.getElementById('f-cat').value  = cat;
+    applyFilters();
+    document.getElementById('listings').scrollIntoView({behavior:'smooth'});
+  }, 80);
+}
+
+/* ── DETAIL VIEW ── */
+function showDetail(id) {
+  const biz = LISTINGS.find(b => b.id === id);
+  if (!biz) return;
+  const related = LISTINGS.filter(b => b.id!==id && (b.category===biz.category||b.city===biz.city)).slice(0,3);
+
+  const dv = document.getElementById('detail-view');
+  dv.innerHTML = `
+<div class="detail-hero-img">
+  <img src="${biz.image}&w=1400" alt="${biz.imageAlt}" loading="eager">
+  <div class="detail-hero-overlay"></div>
+  <div class="detail-hero-inner">
+    <h1 class="detail-h1">${biz.name}</h1>
+    <p class="detail-sub">${biz.location} · ${biz.category} · ${biz.price}</p>
+  </div>
+</div>
+<div class="container">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="#" onclick="goHome(event)">Home</a>
+    <span class="bc-sep">›</span>
+    <a href="#" onclick="filterByCategory('${biz.category}')">${biz.category}</a>
+    <span class="bc-sep">›</span>
+    <span aria-current="page">${biz.name}</span>
+  </nav>
+  <div class="detail-layout">
+    <div class="detail-body">
+      <button class="back-btn" onclick="goHome()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M5 12l7 7M5 12l7-7"/></svg>
+        Back to directory
+      </button>
+
+      <h2>About ${biz.name}</h2>
+      <p>${biz.desc}</p>
+
+      <section class="fact-panel" aria-label="Business details">
+        <h2>Key Details</h2>
+        <ul class="fact-list">
+          <li class="fact-row"><span class="f-key">📍 Location</span><span class="f-val">${biz.address}</span></li>
+          <li class="fact-row"><span class="f-key">🕐 Hours</span><span class="f-val">${biz.hours}</span></li>
+          <li class="fact-row"><span class="f-key">💰 Price Range</span><span class="f-val">${biz.price}</span></li>
+          <li class="fact-row"><span class="f-key">🏷️ Industry</span><span class="f-val">${biz.category}</span></li>
+          <li class="fact-row"><span class="f-key">👤 Owner</span><span class="f-val">${biz.ownerName}</span></li>
+          <li class="fact-row"><span class="f-key">🌐 Website</span><span class="f-val"><a href="https://${biz.website}" target="_blank" rel="noopener" style="color:var(--amber)">${biz.website}</a></span></li>
+        </ul>
+      </section>
+
+      <section aria-label="Tags and specialties">
+        <h2>Specialties</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:32px">
+          ${biz.tags.map(t=>`<span style="padding:7px 16px;border-radius:100px;background:var(--parchment);border:1px solid var(--border);font-size:0.85rem;color:var(--stone)">${t}</span>`).join('')}
+        </div>
+      </section>
+
+      ${related.length ? `
+      <section aria-label="Related businesses" style="border-top:1px solid var(--border);padding-top:36px">
+        <h2>Similar Businesses</h2>
+        <div class="related-grid">
+          ${related.map(r=>`
+          <div class="rel-card" onclick="showDetail(${r.id})" role="link" tabindex="0">
+            <img class="rel-img" src="${r.image}&w=160" alt="${r.imageAlt}" loading="lazy">
+            <div class="rel-info">
+              <div class="rel-name">${r.name}</div>
+              <div class="rel-sub">${r.category} · ${r.location}</div>
+            </div>
+          </div>`).join('')}
+        </div>
+      </section>` : ''}
+    </div>
+
+    <aside class="detail-sidebar" aria-label="Contact and ratings">
+      <div class="sidebar-card">
+        <h3>Ratings</h3>
+        <div class="rating-row">
+          <div class="rating-big">${biz.rating}</div>
+          <div>
+            <div class="stars">${stars(biz.rating)}</div>
+            <div class="r-count">${biz.reviews.toLocaleString()} reviews</div>
+          </div>
+        </div>
+        <p style="font-size:0.8rem;color:var(--stone)">Based on verified customer reviews</p>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Contact &amp; Visit</h3>
+        <div class="contact-row"><div class="c-icon">📞</div><a href="tel:${biz.phone}">${biz.phone}</a></div>
+        <div class="contact-row"><div class="c-icon">✉️</div><a href="mailto:${biz.email}" style="font-size:0.82rem;word-break:break-all">${biz.email}</a></div>
+        <div class="contact-row"><div class="c-icon">🌐</div><a href="https://${biz.website}" target="_blank" rel="noopener">${biz.website}</a></div>
+        <div class="contact-row"><div class="c-icon">📍</div><span style="font-size:0.83rem">${biz.address}</span></div>
+        <div class="map-placeholder" role="img" aria-label="Map location of ${biz.name}">
+          <div style="font-size:1.8rem;margin-bottom:6px">🗺️</div>
+          <strong style="color:var(--bark);font-size:0.875rem">${biz.name}</strong>
+          <span style="margin-top:2px">${biz.location}</span>
+          <a href="https://maps.google.com/?q=${encodeURIComponent(biz.address)}" target="_blank" rel="noopener" style="color:var(--amber);margin-top:10px;font-size:0.82rem;font-weight:600">Open in Google Maps →</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>`;
+
+  dv.classList.add('on');
+  document.getElementById('main-view').classList.add('off');
+  window.scrollTo({top:0, behavior:'instant'});
+  document.title = `${biz.name} — Real Black Wall Street`;
+}
+
+function goHome(e) {
+  if (e) e.preventDefault();
+  document.getElementById('detail-view').classList.remove('on');
+  document.getElementById('detail-view').innerHTML = '';
+  document.getElementById('main-view').classList.remove('off');
+  document.title = 'Real Black Wall Street — Small Business Directory';
+}
+
+/* ── MOBILE NAV ── */
+function toggleMobileNav() {
+  const nav = document.getElementById('mobile-nav');
+  const btn = document.getElementById('hamburger');
+  const isOpen = nav.classList.contains('open');
+  if (isOpen) { closeMobileNav(); } else {
+    nav.classList.add('open');
+    btn.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+}
+function closeMobileNav() {
+  document.getElementById('mobile-nav').classList.remove('open');
+  const btn = document.getElementById('hamburger');
+  btn.classList.remove('open');
+  btn.setAttribute('aria-expanded', 'false');
+  document.body.style.overflow = '';
+}
+
+/* ── SUBMISSION MODAL ── */
+function openSubmitModal() {
+  document.getElementById('submit-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('f-biz-name')?.focus(), 50);
+}
+function closeSubmitModal() {
+  document.getElementById('submit-modal').classList.remove('open');
+  document.body.style.overflow = '';
+  // Reset form after close animation
+  setTimeout(() => {
+    document.getElementById('submit-form').reset();
+    document.getElementById('form-success').classList.remove('show');
+    document.getElementById('submit-form').style.display = '';
+    document.querySelectorAll('.field-grp').forEach(g => g.classList.remove('has-err'));
+    document.querySelectorAll('.f-inp,.f-sel,.f-txt').forEach(el => el.classList.remove('err'));
+  }, 320);
+}
+
+function handleSubmit(e) {
+  e.preventDefault();
+  if (!validateForm()) return;
+  const btn = document.getElementById('btn-submit-main');
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+  // Simulate async submission (replace with real fetch() when backend exists)
+  setTimeout(() => {
+    document.getElementById('submit-form').style.display = 'none';
+    document.getElementById('form-success').classList.add('show');
+    btn.disabled = false;
+    btn.textContent = 'Submit Listing →';
+  }, 1200);
+}
+
+function validateForm() {
+  let valid = true;
+  const rules = [
+    { id: 'f-biz-name',  check: v => v.trim().length > 0 },
+    { id: 'f-biz-cat',   check: v => v !== '' },
+    { id: 'f-biz-price', check: v => v !== '' },
+    { id: 'f-biz-desc',  check: v => v.trim().length >= 30 },
+    { id: 'f-biz-state', check: v => v !== '' },
+    { id: 'f-biz-city',  check: v => v.trim().length > 0 },
+    { id: 'f-biz-owner', check: v => v.trim().length > 0 },
+    { id: 'f-biz-email', check: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
+  ];
+  rules.forEach(({ id, check }) => {
+    const el = document.getElementById(id);
+    const grp = el?.closest('.field-grp');
+    if (!check(el?.value || '')) {
+      el?.classList.add('err');
+      grp?.classList.add('has-err');
+      valid = false;
+    } else {
+      el?.classList.remove('err');
+      grp?.classList.remove('has-err');
+    }
+  });
+  if (!valid) {
+    // Scroll to first error
+    document.querySelector('.field-grp.has-err')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  return valid;
+}
+
+// Clear error on input
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.f-inp,.f-sel,.f-txt').forEach(el => {
+    el.addEventListener('input', () => {
+      el.classList.remove('err');
+      el.closest('.field-grp')?.classList.remove('has-err');
+    });
+  });
+});
+
+// Escape key closes modals
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (document.getElementById('submit-modal').classList.contains('open')) closeSubmitModal();
+  if (document.getElementById('mobile-nav').classList.contains('open')) closeMobileNav();
+});
+
+/* ── INIT ── */
+document.addEventListener('DOMContentLoaded', () => {
+  visible = [...LISTINGS];
+  renderGrid();
+});
+</script>
+</body>
+</html>
