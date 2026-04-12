@@ -1,0 +1,218 @@
+{
+  "name": "RBWS — Business Submission Approval",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "rbsw-business-submission",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "rbsw-node-01",
+      "name": "Webhook — Receive Submission",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 400],
+      "webhookId": "rbsw-submission"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"success\": true, \"message\": \"Submission received. You will be notified by email once it has been reviewed.\" }",
+        "options": {}
+      },
+      "id": "rbsw-node-02",
+      "name": "Respond — Acknowledge",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [420, 240]
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body;\n\nconst CATEGORY_MAP = {\n  'Food & Restaurant':          1,\n  'Fashion & Apparel':          2,\n  'Health & Wellness':          3,\n  'Technology':                 4,\n  'Beauty & Personal Care':     5,\n  'Art & Creative':             6,\n  'Finance & Legal':            7,\n  'Education & Tutoring':       8,\n  'Freelancers':                9,\n  'Handyman Services':          10,\n  'Transportation & Logistics': 11\n};\n\n// Generate unique slug: name + short timestamp suffix\nconst slug = (body.businessName || '')\n  .toLowerCase()\n  .trim()\n  .replace(/[^a-z0-9\\s-]/g, '')\n  .replace(/\\s+/g, '-')\n  .replace(/-+/g, '-')\n  .replace(/^-|-$/g, '')\n  + '-' + Date.now().toString(36);\n\n// Normalize instagram handle\nconst instagram = (body.instagram || '').replace(/^@/, '');\n\nreturn [{\n  json: {\n    businessName: body.businessName || '',\n    category:     body.category     || '',\n    categoryId:   CATEGORY_MAP[body.category] || null,\n    priceRange:   body.priceRange   || '$$',\n    description:  body.description  || '',\n    state:        body.state        || '',\n    city:         body.city         || '',\n    ownerName:    body.ownerName    || '',\n    email:        body.email        || '',\n    website:      body.website      || '',\n    instagram:    instagram,\n    submittedAt:  body.submittedAt  || new Date().toISOString(),\n    slug:         slug,\n    shortDesc:    (body.description || '').substring(0, 160)\n  }\n}];"
+      },
+      "id": "rbsw-node-03",
+      "name": "Code — Parse & Enrich",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [420, 400]
+    },
+    {
+      "parameters": {
+        "fromEmail": "noreply@realblackwallstreet.com",
+        "toEmail": "YOUR_ADMIN_EMAIL_HERE",
+        "subject": "=New Submission: {{ $json.businessName }}",
+        "emailType": "html",
+        "message": "=<!DOCTYPE html><html><head><meta charset=\"UTF-8\"></head><body style=\"margin:0;padding:0;background:#f0ece4;font-family:Arial,sans-serif\">\n<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\"><tr><td align=\"center\" style=\"padding:40px 16px\">\n<table width=\"560\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#ffffff;border-radius:10px;overflow:hidden;border:1px solid #ddd6c8\">\n\n  <!-- Header -->\n  <tr><td style=\"background:#1e1a14;padding:24px 32px\">\n    <p style=\"margin:0;color:#E8A84D;font-size:18px;font-weight:bold\">Real Black Wall Street</p>\n    <p style=\"margin:4px 0 0;color:#a09080;font-size:13px\">New business listing for review</p>\n  </td></tr>\n\n  <!-- Business Details -->\n  <tr><td style=\"padding:28px 32px 0\">\n    <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n\n      <tr><td style=\"padding:12px 0;border-bottom:1px solid #ece8e0\">\n        <p style=\"margin:0 0 3px;font-size:11px;color:#a09080;text-transform:uppercase;letter-spacing:.08em\">Business Name</p>\n        <p style=\"margin:0;font-size:18px;font-weight:bold;color:#1e1a14\">{{ $json.businessName }}</p>\n      </td></tr>\n\n      <tr><td style=\"padding:12px 0;border-bottom:1px solid #ece8e0\">\n        <p style=\"margin:0 0 3px;font-size:11px;color:#a09080;text-transform:uppercase;letter-spacing:.08em\">Location</p>\n        <p style=\"margin:0;font-size:15px;color:#2e2a22\">{{ $json.city }}, {{ $json.state }}</p>\n      </td></tr>\n\n      <tr><td style=\"padding:12px 0;border-bottom:1px solid #ece8e0\">\n        <p style=\"margin:0 0 3px;font-size:11px;color:#a09080;text-transform:uppercase;letter-spacing:.08em\">Website</p>\n        <p style=\"margin:0;font-size:15px;color:#2e2a22\">{{ $json.website || '—' }}</p>\n      </td></tr>\n\n      <tr><td style=\"padding:12px 0;border-bottom:1px solid #ece8e0\">\n        <p style=\"margin:0 0 3px;font-size:11px;color:#a09080;text-transform:uppercase;letter-spacing:.08em\">Instagram</p>\n        <p style=\"margin:0;font-size:15px;color:#2e2a22\">{{ $json.instagram ? '@' + $json.instagram : '—' }}</p>\n      </td></tr>\n\n      <tr><td style=\"padding:12px 0\">\n        <p style=\"margin:0 0 3px;font-size:11px;color:#a09080;text-transform:uppercase;letter-spacing:.08em\">Owner / Email</p>\n        <p style=\"margin:0;font-size:15px;color:#2e2a22\">{{ $json.ownerName }} &middot; {{ $json.email }}</p>\n      </td></tr>\n\n    </table>\n  </td></tr>\n\n  <!-- Approve / Reject Buttons -->\n  <tr><td style=\"padding:24px 32px 32px\">\n    <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\"><tr>\n      <td style=\"padding-right:8px\">\n        <a href=\"{{ $execution.resumeUrl }}?action=approve&submitterEmail={{ $json.email }}&businessName={{ $json.businessName }}\"\n           style=\"display:block;background:#3D5C35;color:#ffffff;padding:15px 0;border-radius:8px;text-decoration:none;font-weight:bold;font-size:15px;text-align:center\">Approve</a>\n      </td>\n      <td style=\"padding-left:8px\">\n        <a href=\"{{ $execution.resumeUrl }}?action=reject&submitterEmail={{ $json.email }}&businessName={{ $json.businessName }}\"\n           style=\"display:block;background:#7a6e64;color:#ffffff;padding:15px 0;border-radius:8px;text-decoration:none;font-weight:bold;font-size:15px;text-align:center\">Reject</a>\n      </td>\n    </tr></table>\n  </td></tr>\n\n  <!-- Footer -->\n  <tr><td style=\"background:#f8f4ec;padding:16px 32px;border-top:1px solid #ece8e0\">\n    <p style=\"margin:0;font-size:12px;color:#a09080;text-align:center\">Real Black Wall Street &middot; Admin Review</p>\n  </td></tr>\n\n</table>\n</td></tr></table>\n</body></html>",
+        "options": {}
+      },
+      "id": "rbsw-node-04",
+      "name": "Email — Notify Admin",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [640, 400]
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "options": {}
+      },
+      "id": "rbsw-node-05",
+      "name": "Wait — Admin Decision",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [860, 400],
+      "webhookId": "rbsw-approval-wait"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "cond-01",
+              "leftValue": "={{ $json.query.action }}",
+              "rightValue": "approve",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "rbsw-node-06",
+      "name": "IF — Approve or Reject",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1080, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://coymqpazmzvxanabnhre.supabase.co/rest/v1/businesses",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"slug\":         \"{{ $('Code — Parse & Enrich').item.json.slug }}\",\n  \"name\":         \"{{ $('Code — Parse & Enrich').item.json.businessName }}\",\n  \"category_id\":  {{ $('Code — Parse & Enrich').item.json.categoryId }},\n  \"owner_name\":   \"{{ $('Code — Parse & Enrich').item.json.ownerName }}\",\n  \"city\":         \"{{ $('Code — Parse & Enrich').item.json.city }}\",\n  \"state_code\":   \"{{ $('Code — Parse & Enrich').item.json.state }}\",\n  \"email\":        \"{{ $('Code — Parse & Enrich').item.json.email }}\",\n  \"website\":      \"{{ $('Code — Parse & Enrich').item.json.website }}\",\n  \"price_range\":  \"{{ $('Code — Parse & Enrich').item.json.priceRange }}\",\n  \"short_desc\":   \"{{ $('Code — Parse & Enrich').item.json.shortDesc }}\",\n  \"description\":  \"{{ $('Code — Parse & Enrich').item.json.description }}\",\n  \"rating\":       0,\n  \"review_count\": 0,\n  \"featured\":     false,\n  \"status\":       \"approved\"\n}",
+        "options": {}
+      },
+      "id": "rbsw-node-07",
+      "name": "Supabase — Insert Business",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1300, 280]
+    },
+    {
+      "parameters": {
+        "fromEmail": "noreply@realblackwallstreet.com",
+        "toEmail": "={{ $json.query.submitterEmail }}",
+        "subject": "You're live on Real Black Wall Street!",
+        "emailType": "html",
+        "message": "=<!DOCTYPE html><html><head><meta charset=\"UTF-8\"></head><body style=\"margin:0;padding:0;background:#f0ece4;font-family:Arial,sans-serif\">\n<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\"><tr><td align=\"center\" style=\"padding:40px 16px\">\n<table width=\"520\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#ffffff;border-radius:10px;overflow:hidden;border:1px solid #ddd6c8\">\n  <tr><td style=\"background:#1e1a14;padding:24px 32px\">\n    <p style=\"margin:0;color:#E8A84D;font-size:18px;font-weight:bold\">Real Black Wall Street</p>\n  </td></tr>\n  <tr><td style=\"padding:36px 32px;text-align:center\">\n    <p style=\"margin:0 0 8px;font-size:22px;font-weight:bold;color:#1e1a14\">You're on the map.</p>\n    <p style=\"margin:0 0 28px;font-size:15px;color:#6a6058;line-height:1.6\"><strong>{{ $json.query.businessName }}</strong> has been approved and is now live in the directory.</p>\n    <a href=\"https://realblackwallstreet.com\" style=\"display:inline-block;background:#C8832A;color:#ffffff;padding:16px 40px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:16px\">View the Directory</a>\n    <p style=\"margin:28px 0 0;font-size:12px;color:#a09080\">Real Black Wall Street &middot; The Nation's Small Business Directory</p>\n  </td></tr>\n</table>\n</td></tr></table>\n</body></html>",
+        "options": {}
+      },
+      "id": "rbsw-node-08",
+      "name": "Email — Approval Confirmation",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1520, 280]
+    },
+    {
+      "parameters": {
+        "fromEmail": "noreply@realblackwallstreet.com",
+        "toEmail": "={{ $json.query.submitterEmail }}",
+        "subject": "Update on your Real Black Wall Street submission",
+        "emailType": "html",
+        "message": "=<!DOCTYPE html><html><head><meta charset=\"UTF-8\"></head><body style=\"margin:0;padding:0;background:#f0ece4;font-family:Arial,sans-serif\">\n<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\"><tr><td align=\"center\" style=\"padding:40px 16px\">\n<table width=\"520\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#ffffff;border-radius:10px;overflow:hidden;border:1px solid #ddd6c8\">\n  <tr><td style=\"background:#1e1a14;padding:24px 32px\">\n    <p style=\"margin:0;color:#E8A84D;font-size:18px;font-weight:bold\">Real Black Wall Street</p>\n  </td></tr>\n  <tr><td style=\"padding:36px 32px\">\n    <p style=\"margin:0 0 16px;font-size:20px;font-weight:bold;color:#1e1a14\">Thank you for your submission</p>\n    <p style=\"margin:0 0 16px;font-size:15px;color:#2e2a22;line-height:1.6\">We reviewed <strong>{{ $json.query.businessName }}</strong> and are unable to approve the listing at this time.</p>\n    <p style=\"margin:0;font-size:14px;color:#6a6058;line-height:1.6\">This may be due to incomplete information or a listing that doesn't meet our current guidelines. If you believe this is an error, please reply to this email and we'll take another look.</p>\n    <p style=\"margin:28px 0 0;font-size:12px;color:#a09080;border-top:1px solid #ece8e0;padding-top:20px\">Real Black Wall Street &middot; The Nation's Small Business Directory</p>\n  </td></tr>\n</table>\n</td></tr></table>\n</body></html>",
+        "options": {}
+      },
+      "id": "rbsw-node-09",
+      "name": "Email — Rejection Notice",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1300, 520]
+    }
+  ],
+  "connections": {
+    "Webhook — Receive Submission": {
+      "main": [
+        [
+          { "node": "Respond — Acknowledge", "type": "main", "index": 0 },
+          { "node": "Code — Parse & Enrich",  "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Code — Parse & Enrich": {
+      "main": [
+        [
+          { "node": "Email — Notify Admin", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Email — Notify Admin": {
+      "main": [
+        [
+          { "node": "Wait — Admin Decision", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Wait — Admin Decision": {
+      "main": [
+        [
+          { "node": "IF — Approve or Reject", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "IF — Approve or Reject": {
+      "main": [
+        [
+          { "node": "Supabase — Insert Business", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Email — Rejection Notice", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Supabase — Insert Business": {
+      "main": [
+        [
+          { "node": "Email — Approval Confirmation", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

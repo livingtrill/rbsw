@@ -16,7 +16,8 @@ insert into categories (slug, name, icon) values
   ('finance-legal',        'Finance & Legal',       '⚖'),
   ('education-tutoring',   'Education & Tutoring',  '📚'),
   ('freelancers',          'Freelancers',           '💼'),
-  ('handyman-services',    'Handyman Services',     '🔧');
+  ('handyman-services',         'Handyman Services',         '🔧'),
+  ('transportation-logistics',  'Transportation & Logistics', '🚛');
 
 -- Resulting IDs:
 --  1 = Food & Restaurant      6 = Art & Creative
@@ -24,6 +25,7 @@ insert into categories (slug, name, icon) values
 --  3 = Health & Wellness      8 = Education & Tutoring
 --  4 = Technology             9 = Freelancers
 --  5 = Beauty & Personal Care 10 = Handyman Services
+--                             11 = Transportation & Logistics
 
 
 -- ── TAGS ─────────────────────────────────────────────────────────────────────
