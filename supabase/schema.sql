@@ -124,3 +124,25 @@ create policy "public_read_business_tags"
 
 -- NOTE: No INSERT/UPDATE/DELETE for anon role anywhere.
 -- All writes go through your webhook using the service_role key.
+
+
+-- ── TAKEDOWN REQUESTS ─────────────────────────────────────────────────────────
+create table takedown_requests (
+  id            integer generated always as identity primary key,
+  business_name text        not null,
+  email         text        not null,
+  status        text        not null default 'pending'
+                            check (status in ('pending','approved','dismissed')),
+  submitted_at  timestamptz not null default now(),
+  resolved_at   timestamptz,
+  notes         text
+);
+
+alter table takedown_requests enable row level security;
+
+-- anon key: insert only (the takedown form on the public site)
+create policy "public_insert_takedown_requests"
+  on takedown_requests for insert
+  with check (true);
+
+-- service_role bypasses RLS automatically — no read/update policy needed for anon.
