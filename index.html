@@ -1214,6 +1214,7 @@ footer { background:var(--surface-2); border-top:1px solid var(--border); color:
             <li><a href="#">List Your Business</a></li>
             <li><a href="#">Verification Process</a></li>
             <li><a href="#">Sitemap</a></li>
+            <li><a href="#" onclick="event.preventDefault();openTakedownModal()">Request Takedown</a></li>
           </ul>
         </div>
         <div class="footer-col">
@@ -1404,6 +1405,60 @@ footer { background:var(--surface-2); border-top:1px solid var(--border); color:
     </div><!-- /modal-body -->
   </div><!-- /modal -->
 </div><!-- /modal-backdrop -->
+
+<!-- ── TAKEDOWN MODAL ── -->
+<div class="modal-backdrop" id="takedown-modal" role="dialog" aria-modal="true" aria-labelledby="takedown-modal-title">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header">
+      <div>
+        <h2 class="modal-title" id="takedown-modal-title">Request Takedown</h2>
+        <p class="modal-subtitle">Need your business removed from the directory? We'll process your request within 48 hours.</p>
+      </div>
+      <button class="modal-close" onclick="closeTakedownModal()" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Success state -->
+      <div class="form-success" id="takedown-success">
+        <div class="success-icon">✓</div>
+        <h3>Request received.</h3>
+        <p>We'll verify your identity and remove the listing within 48 hours. Check your inbox for a confirmation.</p>
+        <button class="btn-submit" onclick="closeTakedownModal()">Back to Directory</button>
+      </div>
+
+      <!-- Form -->
+      <form id="takedown-form" novalidate onsubmit="handleTakedown(event)">
+
+        <p style="font-size:0.845rem;color:var(--muted);line-height:1.65;margin-bottom:22px;">
+          Only the verified business owner may request removal. We'll send a confirmation to the email on file before taking any action.
+        </p>
+
+        <div class="form-grid" style="grid-template-columns:1fr">
+
+          <div class="field-grp">
+            <label class="field-lbl" for="td-biz-name">Business Name <span class="req">*</span></label>
+            <input class="f-inp" id="td-biz-name" type="text" placeholder="e.g. Nourish Kitchen Co." autocomplete="organization">
+            <span class="f-err-msg">Please enter the business name.</span>
+          </div>
+
+          <div class="field-grp">
+            <label class="field-lbl" for="td-email">Owner Email <span class="req">*</span></label>
+            <input class="f-inp" id="td-email" type="email" placeholder="hello@yourbusiness.com" autocomplete="email">
+            <span class="f-err-msg">Please enter a valid email address.</span>
+          </div>
+
+        </div><!-- /form-grid -->
+
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" onclick="closeTakedownModal()">Cancel</button>
+          <button type="submit" class="btn-submit" id="btn-takedown-submit"
+            style="background:#ef4444">Submit Request →</button>
+        </div>
+      </form>
+
+    </div><!-- /modal-body -->
+  </div><!-- /modal -->
+</div><!-- /takedown-modal-backdrop -->
 
 <script>
 /* ── SUPABASE CONFIG ── */
@@ -2183,7 +2238,82 @@ document.addEventListener('DOMContentLoaded', () => {
 // Escape key closes modals
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
-  if (document.getElementById('submit-modal').classList.contains('open')) closeSubmitModal();
+  if (document.getElementById('submit-modal').classList.contains('open'))   closeSubmitModal();
+  if (document.getElementById('takedown-modal').classList.contains('open')) closeTakedownModal();
+});
+
+/* ── TAKEDOWN MODAL ── */
+function openTakedownModal() {
+  document.getElementById('takedown-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('td-biz-name')?.focus(), 50);
+}
+function closeTakedownModal() {
+  document.getElementById('takedown-modal').classList.remove('open');
+  document.body.style.overflow = '';
+  setTimeout(() => {
+    document.getElementById('takedown-form').reset();
+    document.getElementById('takedown-success').classList.remove('show');
+    document.getElementById('takedown-form').style.display = '';
+    document.querySelectorAll('#takedown-form .field-grp').forEach(g => g.classList.remove('has-err'));
+    document.querySelectorAll('#takedown-form .f-inp').forEach(el => el.classList.remove('err'));
+    const btn = document.getElementById('btn-takedown-submit');
+    btn.disabled = false;
+    btn.textContent = 'Submit Request →';
+  }, 320);
+}
+async function handleTakedown(e) {
+  e.preventDefault();
+  const nameEl  = document.getElementById('td-biz-name');
+  const emailEl = document.getElementById('td-email');
+  let valid = true;
+
+  [
+    { el: nameEl,  check: v => v.trim().length > 0 },
+    { el: emailEl, check: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
+  ].forEach(({ el, check }) => {
+    const grp = el.closest('.field-grp');
+    if (!check(el.value || '')) {
+      el.classList.add('err'); grp.classList.add('has-err'); valid = false;
+    } else {
+      el.classList.remove('err'); grp.classList.remove('has-err');
+    }
+  });
+  if (!valid) return;
+
+  const btn = document.getElementById('btn-takedown-submit');
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+
+  try {
+    const res = await fetch('https://n8n.livingtrillonline.com/webhook/rbsw-takedown-request', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        businessName: nameEl.value.trim(),
+        email:        emailEl.value.trim(),
+        submittedAt:  new Date().toISOString(),
+      }),
+    });
+    if (!res.ok) throw new Error('Webhook returned ' + res.status);
+    document.getElementById('takedown-form').style.display = 'none';
+    document.getElementById('takedown-success').classList.add('show');
+  } catch (err) {
+    console.error('Takedown error:', err);
+    btn.disabled = false;
+    btn.textContent = 'Submit Request →';
+    alert('Something went wrong. Please try again or email us directly.');
+  }
+}
+
+// Clear takedown errors on input
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('#takedown-form .f-inp').forEach(el => {
+    el.addEventListener('input', () => {
+      el.classList.remove('err');
+      el.closest('.field-grp')?.classList.remove('has-err');
+    });
+  });
 });
 
 /* ── GRID LOADING STATE ── */

@@ -1,0 +1,503 @@
+{
+  "name": "RBSW — AI Business Discovery",
+  "nodes": [
+
+    {
+      "id": "disc-01-manual",
+      "name": "Run Manually",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [200, 420],
+      "parameters": {}
+    },
+
+    {
+      "id": "disc-01-schedule",
+      "name": "Weekly Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [200, 240],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "weeksInterval": 1,
+              "triggerAtDay": [1],
+              "triggerAtHour": 6,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "disc-02-config",
+      "name": "Search Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [440, 340],
+      "parameters": {
+        "mode": "manual",
+        "fields": {
+          "values": [
+            { "name": "category",   "type": "stringValue", "stringValue": "Food & Restaurant" },
+            { "name": "state",      "type": "stringValue", "stringValue": "Georgia" },
+            { "name": "stateCode",  "type": "stringValue", "stringValue": "GA" },
+            { "name": "city",       "type": "stringValue", "stringValue": "Atlanta" },
+            { "name": "maxResults", "type": "numberValue", "numberValue": 10 }
+          ]
+        }
+      },
+      "notes": "Edit category, city, state, stateCode to target a specific search batch. Run multiple times to populate each vertical."
+    },
+
+    {
+      "id": "disc-03-prompt",
+      "name": "Build Agent Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 340],
+      "parameters": {
+        "jsCode": "const { category, state, stateCode, city, maxResults } = $input.first().json;\n\nconst queries = [\n  `Black owned ${category} ${city} ${state}`,\n  `minority owned ${category} ${city} ${state}`,\n  `Hispanic owned ${category} ${city} ${state}`,\n  `women owned ${category} ${city} ${state}`,\n  `Asian owned ${category} ${city} ${state}`,\n  `BIPOC owned ${category} business ${city}`,\n  `minority business directory ${category} ${state}`,\n  `site:yelp.com ${category} minority owned ${city} ${state}`,\n];\n\nconst queriesList = queries.map((q, i) => `   ${i + 1}. \"${q}\"`).join('\\n');\n\nconst prompt = `You are a business researcher for Real Black Wall Street, a nationwide minority-owned business directory.\\n\\nTASK: Find ${maxResults} real minority-owned businesses in the [${category}] industry in ${city}, ${state} (${stateCode}).\\n\\nSTEP 1 — Run ALL of these searches using serper_web_search (one call per query):\\n${queriesList}\\n\\nSTEP 2 — For each promising business website or directory page, use firecrawl_scrape to extract contact and ownership info.\\n\\nSTEP 3 — Use apify_google_maps with query: \"minority owned ${category} ${city} ${state}\"\\n\\nSTEP 4 — Return a JSON array. Each object must include:\\n  - name (string, REQUIRED)\\n  - owner_name (string)\\n  - address (string, full street address)\\n  - city (\"${city}\")\\n  - state_code (\"${stateCode}\")\\n  - phone (string)\\n  - email (string)\\n  - website (string, REQUIRED — domain only, no http://)\\n  - description (2–3 sentences)\\n  - category (\"${category}\")\\n  - price_range ($ | $$ | $$$ | $$$$)\\n  - hours (string)\\n  - minority_type (Black | Hispanic | Asian | Women | Indigenous | Other)\\n  - ownership_signal (brief text — what phrase or evidence on their site/listing indicates minority ownership)\\n  - lat (number if from Maps)\\n  - lng (number if from Maps)\\n\\nRULES: Only real businesses. Only in ${city}, ${state}. Must have name + website. No duplicates. Return ONLY a valid JSON array.`;\n\nreturn [{ json: { prompt, category, state, stateCode, city, maxResults } }];"
+      }
+    },
+
+    {
+      "id": "disc-04-agent",
+      "name": "AI Business Scout",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [880, 340],
+      "parameters": {
+        "agentType": "toolsAgent",
+        "promptType": "define",
+        "text": "={{ $json.prompt }}",
+        "options": {
+          "maxIterations": 20,
+          "returnIntermediateSteps": false,
+          "systemMessage": "You are an expert business researcher and web intelligence agent for Real Black Wall Street — a nationwide minority-owned business directory. You systematically search, scrape, and extract structured data about real minority-owned businesses. Complete every assigned search query before returning results. Return only valid JSON arrays."
+        }
+      }
+    },
+
+    {
+      "id": "disc-04-lm",
+      "name": "Claude Sonnet (Scout)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.2,
+      "position": [880, 560],
+      "parameters": {
+        "model": "claude-sonnet-4-6",
+        "options": { "maxTokens": 8192, "temperature": 0.1 }
+      },
+      "credentials": {
+        "anthropicApi": { "id": "YOUR_ANTHROPIC_CREDENTIAL_ID", "name": "Anthropic account" }
+      }
+    },
+
+    {
+      "id": "disc-04-tool-serper",
+      "name": "Serper Web Search",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [640, 560],
+      "parameters": {
+        "name": "serper_web_search",
+        "description": "Search Google for minority-owned business listings, directories, and websites. Returns organic results with titles, URLs, and snippets. Run one query per call. Use multiple targeted queries covering Black-owned, Hispanic-owned, women-owned, and Asian-owned businesses.",
+        "method": "POST",
+        "url": "https://google.serper.dev/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-API-KEY",     "value": "YOUR_SERPER_API_KEY" },
+            { "name": "Content-Type",  "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ q: $fromAI('query', 'Google search query for minority-owned businesses', 'string'), num: 10, gl: 'us', hl: 'en' }) }}"
+      }
+    },
+
+    {
+      "id": "disc-04-tool-firecrawl",
+      "name": "Firecrawl Scrape",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [880, 680],
+      "parameters": {
+        "name": "firecrawl_scrape",
+        "description": "Scrape and extract clean content from any URL using Firecrawl. Returns readable markdown. Use on business websites, Yelp pages, and directory listings to extract owner name, address, phone, hours, and ownership claims.",
+        "method": "POST",
+        "url": "https://api.firecrawl.dev/v1/scrape",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer YOUR_FIRECRAWL_API_KEY" },
+            { "name": "Content-Type",  "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ url: $fromAI('url', 'Full URL to scrape for business information', 'string'), formats: ['markdown'], onlyMainContent: true, waitFor: 1500 }) }}"
+      }
+    },
+
+    {
+      "id": "disc-04-tool-apify",
+      "name": "Apify Google Maps",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [1100, 560],
+      "parameters": {
+        "name": "apify_google_maps",
+        "description": "Search Google Maps for local businesses using Apify. Returns name, address, phone, website, rating, and category. Pass a specific search like 'Black owned restaurant Atlanta GA'.",
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/compass~google-maps-scraper/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN&timeout=120",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ searchStringsArray: [$fromAI('search_query', 'Google Maps search query for minority-owned businesses', 'string')], maxCrawledPlacesPerSearch: 15, language: 'en', countryCode: 'us' }) }}"
+      }
+    },
+
+    {
+      "id": "disc-05-parse",
+      "name": "Parse & Structure Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 340],
+      "parameters": {
+        "jsCode": "const agentOutput = $input.first().json.output || $input.first().json.text || '';\n\nconst CATEGORY_MAP = {\n  'Food & Restaurant': 1, 'Fashion & Apparel': 2, 'Health & Wellness': 3,\n  'Technology': 4, 'Beauty & Personal Care': 5, 'Art & Creative': 6,\n  'Finance & Legal': 7, 'Education & Tutoring': 8, 'Freelancers': 9,\n  'Handyman Services': 10, 'Transportation & Logistics': 11\n};\n\nlet businesses = [];\ntry {\n  const m = agentOutput.match(/\\[\\s*\\{[\\s\\S]*?\\}\\s*\\]/);\n  businesses = JSON.parse(m ? m[0] : agentOutput.trim());\n} catch (e) {\n  return [{ json: { error: 'Failed to parse agent output', raw: agentOutput.slice(0, 800) } }];\n}\n\nif (!Array.isArray(businesses) || !businesses.length) {\n  return [{ json: { error: 'No businesses found', raw: agentOutput.slice(0, 800) } }];\n}\n\nconst seen = new Set();\nreturn businesses\n  .filter(biz => {\n    if (!biz.name || !biz.website) return false;\n    const key = String(biz.website).toLowerCase().replace(/^https?:\\/\\/(www\\.)?/, '').replace(/\\/$/, '');\n    if (seen.has(key)) return false;\n    seen.add(key);\n    return true;\n  })\n  .map(biz => {\n    const slug = (biz.name || '')\n      .toLowerCase().trim().replace(/[^a-z0-9\\s-]/g, '').replace(/\\s+/g, '-').slice(0, 48)\n      + '-' + Math.random().toString(36).slice(2, 7);\n    const website = String(biz.website || '').replace(/^https?:\\/\\/(www\\.)?/, '').replace(/\\/$/, '');\n    return {\n      json: {\n        slug,\n        name:             biz.name,\n        category_id:      CATEGORY_MAP[biz.category] || 1,\n        category_label:   biz.category || '',\n        owner_name:       biz.owner_name      || null,\n        city:             biz.city            || '',\n        state_code:       String(biz.state_code || '').toUpperCase().slice(0, 2),\n        location:         `${biz.city || ''}, ${String(biz.state_code || '').toUpperCase().slice(0, 2)}`,\n        address:          biz.address         || null,\n        phone:            biz.phone           || null,\n        email:            biz.email           || null,\n        website:          website             || null,\n        hours:            biz.hours           || null,\n        price_range:      ['$','$$','$$$','$$$$'].includes(biz.price_range) ? biz.price_range : '$$',\n        rating:           0,\n        review_count:     0,\n        description:      biz.description     || null,\n        image_url:        null,\n        image_alt:        null,\n        featured:         false,\n        status:           'pending',\n        lat:              typeof biz.lat === 'number' ? biz.lat : null,\n        lng:              typeof biz.lng === 'number' ? biz.lng : null,\n        minority_type:    biz.minority_type   || null,\n        ownership_signal: biz.ownership_signal || null\n      }\n    };\n  });"
+      }
+    },
+
+    {
+      "id": "disc-06-verify-prompt",
+      "name": "Build Verification Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1320, 340],
+      "parameters": {
+        "jsCode": "const biz = $input.first().json;\n\nconst websiteUrl = biz.website ? `https://${biz.website}` : null;\n\nconst prompt = `You are a minority business ownership verification specialist for Real Black Wall Street.\n\nVERIFY whether this business is genuinely minority-owned:\n\nBusiness: ${biz.name}\nCategory: ${biz.category_label}\nLocation: ${biz.address || biz.location}\nOwner: ${biz.owner_name || 'unknown'}\nWebsite: ${websiteUrl || 'none'}\nMinority Type Claimed: ${biz.minority_type || 'not specified'}\nOwnership Signal Found During Discovery: ${biz.ownership_signal || 'none'}\nDescription: ${biz.description || 'none'}\n\nVERIFICATION STEPS (use your tools):\n${websiteUrl ? `1. Use firecrawl_verify to scrape ${websiteUrl} — look for: About page, founder story, ownership statements, diversity certifications, \"Black-owned\", \"minority-owned\", \"women-owned\", \"family-owned\" mentions, founder photos or bios, NMSDC/WBENC/SBA 8(a) certification badges.` : '1. No website available — skip scraping.'}\n${websiteUrl ? `2. Use firecrawl_verify to scrape ${websiteUrl}/about or ${websiteUrl}/about-us for ownership details.` : ''}\n3. Use serper_verify to search: \"${biz.name} ${biz.city || ''} minority owned\" and \"${biz.name} owner ${biz.owner_name || ''}\"\n4. Use serper_verify to search: \"${biz.name} Black owned\" OR \"${biz.name} Hispanic owned\" OR \"${biz.name} women owned\"\n\nAFTER gathering evidence, respond with ONLY a valid JSON object:\n{\n  \"verified\": true or false,\n  \"confidence\": number from 0 to 100,\n  \"minority_type\": \"Black | Hispanic | Asian | Women | Indigenous | Other | Unknown\",\n  \"certification\": \"NMSDC | WBENC | SBA 8a | State Certified | Self-Identified | None\",\n  \"evidence\": \"1–2 sentences describing exactly what evidence confirms or denies minority ownership\",\n  \"verdict\": \"APPROVE | REJECT | NEEDS_REVIEW\"\n}\n\nVerdict guide:\n- APPROVE: verified = true, confidence >= 65 — clear evidence of minority ownership\n- NEEDS_REVIEW: confidence 35–64 — some signals but not conclusive\n- REJECT: verified = false, confidence < 35 — no credible evidence found\n\nReturn ONLY the JSON object. No markdown, no explanation.`;\n\nreturn [{ json: { ...biz, verificationPrompt: prompt } }];"
+      }
+    },
+
+    {
+      "id": "disc-07-verify-agent",
+      "name": "AI Ownership Verifier",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [1540, 340],
+      "parameters": {
+        "agentType": "toolsAgent",
+        "promptType": "define",
+        "text": "={{ $json.verificationPrompt }}",
+        "options": {
+          "maxIterations": 8,
+          "returnIntermediateSteps": false,
+          "systemMessage": "You are a strict minority business ownership verification agent for Real Black Wall Street. Your job is to verify whether a business is genuinely minority-owned using web evidence. You look for explicit ownership statements on the business website, news coverage, certifications (NMSDC, WBENC, SBA 8a), social media, and directory listings. You are conservative — when in doubt, return NEEDS_REVIEW rather than APPROVE. You always return only a valid JSON object with no markdown."
+        }
+      }
+    },
+
+    {
+      "id": "disc-07-verify-lm",
+      "name": "Claude Sonnet (Verifier)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.2,
+      "position": [1540, 560],
+      "parameters": {
+        "model": "claude-sonnet-4-6",
+        "options": { "maxTokens": 2048, "temperature": 0 }
+      },
+      "credentials": {
+        "anthropicApi": { "id": "YOUR_ANTHROPIC_CREDENTIAL_ID", "name": "Anthropic account" }
+      }
+    },
+
+    {
+      "id": "disc-07-verify-tool-scrape",
+      "name": "Firecrawl Verify",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [1320, 560],
+      "parameters": {
+        "name": "firecrawl_verify",
+        "description": "Scrape a business website page to find ownership evidence. Look for About pages, founder bios, ownership statements, diversity certifications, and minority-owned claims. Returns clean markdown text.",
+        "method": "POST",
+        "url": "https://api.firecrawl.dev/v1/scrape",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer YOUR_FIRECRAWL_API_KEY" },
+            { "name": "Content-Type",  "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ url: $fromAI('url', 'Full URL to scrape for ownership evidence', 'string'), formats: ['markdown'], onlyMainContent: true, waitFor: 1500 }) }}"
+      }
+    },
+
+    {
+      "id": "disc-07-verify-tool-search",
+      "name": "Serper Verify",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [1740, 560],
+      "parameters": {
+        "name": "serper_verify",
+        "description": "Search Google to find news articles, directory listings, interviews, or other external sources that confirm or deny minority ownership of a business. Use queries like '[Business Name] Black owned' or '[Business Name] owner [owner name]'.",
+        "method": "POST",
+        "url": "https://google.serper.dev/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-API-KEY",    "value": "YOUR_SERPER_API_KEY" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ q: $fromAI('query', 'Search query to find ownership evidence for a business', 'string'), num: 8, gl: 'us' }) }}"
+      }
+    },
+
+    {
+      "id": "disc-08-parse-verdict",
+      "name": "Parse Verdict",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1760, 340],
+      "parameters": {
+        "jsCode": "const biz = $input.first().json;\nconst raw = biz.output || biz.text || '';\n\nlet verdict = {};\ntry {\n  const m = raw.match(/\\{[\\s\\S]*?\\}/);\n  verdict = JSON.parse(m ? m[0] : raw.trim());\n} catch (e) {\n  verdict = { verified: false, confidence: 0, verdict: 'NEEDS_REVIEW', evidence: 'Could not parse verifier output.', minority_type: biz.minority_type || 'Unknown', certification: 'None' };\n}\n\nconst finalMinorityType = verdict.minority_type || biz.minority_type || 'Unknown';\nconst prefix = finalMinorityType !== 'Unknown' ? `[${finalMinorityType}-owned] ` : '';\nconst desc = prefix + (biz.description || '');\n\nreturn [{\n  json: {\n    ...biz,\n    verified:        verdict.verified       || false,\n    confidence:      verdict.confidence     || 0,\n    verdict:         verdict.verdict        || 'NEEDS_REVIEW',\n    evidence:        verdict.evidence       || '',\n    certification:   verdict.certification  || 'None',\n    minority_type:   finalMinorityType,\n    short_desc:      desc.slice(0, 220) || null,\n    description:     desc || null\n  }\n}];"
+      }
+    },
+
+    {
+      "id": "disc-09-route",
+      "name": "Route by Verdict",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [1980, 340],
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict" },
+                "conditions": [
+                  { "leftValue": "={{ $json.verdict }}", "rightValue": "APPROVE", "operator": { "type": "string", "operation": "equals" } }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Approve"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict" },
+                "conditions": [
+                  { "leftValue": "={{ $json.verdict }}", "rightValue": "NEEDS_REVIEW", "operator": { "type": "string", "operation": "equals" } }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Needs Review"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict" },
+                "conditions": [
+                  { "leftValue": "={{ $json.verdict }}", "rightValue": "REJECT", "operator": { "type": "string", "operation": "equals" } }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Reject"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+
+    {
+      "id": "disc-10-insert-approved",
+      "name": "Insert Approved (pending)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2200, 200],
+      "parameters": {
+        "method": "POST",
+        "url": "https://YOUR_SUPABASE_PROJECT_REF.supabase.co/rest/v1/businesses",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey",        "value": "YOUR_SUPABASE_SERVICE_ROLE_KEY" },
+            { "name": "Authorization", "value": "Bearer YOUR_SUPABASE_SERVICE_ROLE_KEY" },
+            { "name": "Content-Type",  "value": "application/json" },
+            { "name": "Prefer",        "value": "return=minimal" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ slug: $json.slug, name: $json.name, category_id: $json.category_id, owner_name: $json.owner_name, city: $json.city, state_code: $json.state_code, location: $json.location, address: $json.address, phone: $json.phone, email: $json.email, website: $json.website, hours: $json.hours, price_range: $json.price_range, rating: $json.rating, review_count: $json.review_count, short_desc: $json.short_desc, description: $json.description, image_url: $json.image_url, image_alt: $json.image_alt, featured: $json.featured, status: 'pending', lat: $json.lat, lng: $json.lng }) }}",
+        "options": {}
+      },
+      "notes": "APPROVED — confidence >= 65, clear evidence. Status set to 'pending' so human admin still does final review before it goes live."
+    },
+
+    {
+      "id": "disc-10-insert-review",
+      "name": "Insert Needs Review (pending)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2200, 380],
+      "parameters": {
+        "method": "POST",
+        "url": "https://YOUR_SUPABASE_PROJECT_REF.supabase.co/rest/v1/businesses",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey",        "value": "YOUR_SUPABASE_SERVICE_ROLE_KEY" },
+            { "name": "Authorization", "value": "Bearer YOUR_SUPABASE_SERVICE_ROLE_KEY" },
+            { "name": "Content-Type",  "value": "application/json" },
+            { "name": "Prefer",        "value": "return=minimal" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ slug: $json.slug, name: $json.name, category_id: $json.category_id, owner_name: $json.owner_name, city: $json.city, state_code: $json.state_code, location: $json.location, address: $json.address, phone: $json.phone, email: $json.email, website: $json.website, hours: $json.hours, price_range: $json.price_range, rating: $json.rating, review_count: $json.review_count, short_desc: $json.short_desc, description: $json.description, image_url: $json.image_url, image_alt: $json.image_alt, featured: $json.featured, status: 'pending', lat: $json.lat, lng: $json.lng }) }}",
+        "options": {}
+      },
+      "notes": "NEEDS REVIEW — confidence 35–64. Saved as pending. Flagged in the admin email for closer human inspection."
+    },
+
+    {
+      "id": "disc-11-merge",
+      "name": "Merge Inserted",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [2420, 290],
+      "parameters": {
+        "mode": "append"
+      }
+    },
+
+    {
+      "id": "disc-12-summary",
+      "name": "Build Email Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2420, 520],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const items = $input.all();\nconst date = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });\n\nconst approved     = items.filter(i => i.json.verdict === 'APPROVE');\nconst needsReview  = items.filter(i => i.json.verdict === 'NEEDS_REVIEW');\n\nconst renderList = (arr, color) => arr\n  .map(i => i.json)\n  .map(b => `<li style=\"margin-bottom:10px\"><strong>${b.name}</strong> <span style=\"color:${color};font-size:11px\">[${b.minority_type || 'Unknown'} · ${b.certification || 'None'} · ${b.confidence || 0}% confidence]</span><br><small style=\"color:#555\">${b.city}, ${b.state_code} &nbsp;·&nbsp; ${b.website || 'no website'}</small><br><small style=\"color:#777;font-style:italic\">${b.evidence || ''}</small></li>`)\n  .join('');\n\nconst html = `<div style=\"font-family:sans-serif;max-width:680px\">\n  <h2 style=\"color:#22c55e;border-bottom:2px solid #22c55e;padding-bottom:8px\">RBSW AI Discovery + Verification Report</h2>\n  <p><strong>Date:</strong> ${date}</p>\n  <table style=\"border-collapse:collapse;margin-bottom:20px\">\n    <tr><td style=\"padding:6px 16px 6px 0\"><strong>✅ Approved (pending admin sign-off):</strong></td><td style=\"color:#16a34a;font-weight:700\">${approved.length}</td></tr>\n    <tr><td style=\"padding:6px 16px 6px 0\"><strong>🔍 Needs Human Review:</strong></td><td style=\"color:#d97706;font-weight:700\">${needsReview.length}</td></tr>\n    <tr><td style=\"padding:6px 16px 6px 0\"><strong>Total Inserted:</strong></td><td style=\"font-weight:700\">${approved.length + needsReview.length}</td></tr>\n  </table>\n  ${approved.length ? `<h3 style=\"color:#16a34a\">✅ Approved Listings</h3><ul style=\"padding-left:18px\">${renderList(approved, '#16a34a')}</ul>` : ''}\n  ${needsReview.length ? `<h3 style=\"color:#d97706\">🔍 Needs Review (flagged for inspection)</h3><ul style=\"padding-left:18px\">${renderList(needsReview, '#d97706')}</ul>` : ''}\n  <hr style=\"margin:24px 0;border-color:#eee\">\n  <p style=\"font-size:12px;color:#888\">All listings are <strong>status: pending</strong>. Use the Supabase dashboard or the existing RBSW approval workflow to approve or reject each one. &mdash; RBSW AI Business Scout</p>\n</div>`;\n\nreturn [{ json: { approved: approved.length, needsReview: needsReview.length, total: approved.length + needsReview.length, date, html } }];"
+      }
+    },
+
+    {
+      "id": "disc-13-email",
+      "name": "Notify Admin",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [2640, 520],
+      "parameters": {
+        "fromEmail": "scout@realblackwallstreet.com",
+        "toEmail": "YOUR_ADMIN_EMAIL_HERE",
+        "subject": "=RBSW Discovery: {{ $json.approved }} approved, {{ $json.needsReview }} for review — {{ $json.date }}",
+        "emailType": "html",
+        "html": "={{ $json.html }}",
+        "options": {}
+      },
+      "credentials": {
+        "smtp": { "id": "YOUR_SMTP_CREDENTIAL_ID", "name": "SMTP account" }
+      }
+    }
+
+  ],
+
+  "connections": {
+    "Run Manually": {
+      "main": [[ { "node": "Search Config", "type": "main", "index": 0 } ]]
+    },
+    "Weekly Schedule": {
+      "main": [[ { "node": "Search Config", "type": "main", "index": 0 } ]]
+    },
+    "Search Config": {
+      "main": [[ { "node": "Build Agent Prompt", "type": "main", "index": 0 } ]]
+    },
+    "Build Agent Prompt": {
+      "main": [[ { "node": "AI Business Scout", "type": "main", "index": 0 } ]]
+    },
+    "AI Business Scout": {
+      "main": [[ { "node": "Parse & Structure Results", "type": "main", "index": 0 } ]]
+    },
+    "Claude Sonnet (Scout)": {
+      "ai_languageModel": [[ { "node": "AI Business Scout", "type": "ai_languageModel", "index": 0 } ]]
+    },
+    "Serper Web Search": {
+      "ai_tool": [[ { "node": "AI Business Scout", "type": "ai_tool", "index": 0 } ]]
+    },
+    "Firecrawl Scrape": {
+      "ai_tool": [[ { "node": "AI Business Scout", "type": "ai_tool", "index": 0 } ]]
+    },
+    "Apify Google Maps": {
+      "ai_tool": [[ { "node": "AI Business Scout", "type": "ai_tool", "index": 0 } ]]
+    },
+    "Parse & Structure Results": {
+      "main": [[ { "node": "Build Verification Prompt", "type": "main", "index": 0 } ]]
+    },
+    "Build Verification Prompt": {
+      "main": [[ { "node": "AI Ownership Verifier", "type": "main", "index": 0 } ]]
+    },
+    "AI Ownership Verifier": {
+      "main": [[ { "node": "Parse Verdict", "type": "main", "index": 0 } ]]
+    },
+    "Claude Sonnet (Verifier)": {
+      "ai_languageModel": [[ { "node": "AI Ownership Verifier", "type": "ai_languageModel", "index": 0 } ]]
+    },
+    "Firecrawl Verify": {
+      "ai_tool": [[ { "node": "AI Ownership Verifier", "type": "ai_tool", "index": 0 } ]]
+    },
+    "Serper Verify": {
+      "ai_tool": [[ { "node": "AI Ownership Verifier", "type": "ai_tool", "index": 0 } ]]
+    },
+    "Parse Verdict": {
+      "main": [[ { "node": "Route by Verdict", "type": "main", "index": 0 } ]]
+    },
+    "Route by Verdict": {
+      "main": [
+        [ { "node": "Insert Approved (pending)",      "type": "main", "index": 0 } ],
+        [ { "node": "Insert Needs Review (pending)",  "type": "main", "index": 0 } ],
+        []
+      ]
+    },
+    "Insert Approved (pending)": {
+      "main": [[ { "node": "Merge Inserted", "type": "main", "index": 0 } ]]
+    },
+    "Insert Needs Review (pending)": {
+      "main": [[ { "node": "Merge Inserted", "type": "main", "index": 1 } ]]
+    },
+    "Merge Inserted": {
+      "main": [[ { "node": "Build Email Summary", "type": "main", "index": 0 } ]]
+    },
+    "Build Email Summary": {
+      "main": [[ { "node": "Notify Admin", "type": "main", "index": 0 } ]]
+    }
+  },
+
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
