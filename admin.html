@@ -725,30 +725,41 @@ let editingId = null;
 
 // ── AUTH ──────────────────────────────────────────────────────────────────────
 
-// Listen for auth state changes (handles OAuth redirects automatically)
+let _adminCheckDone = false;
+
+// Only handles page-load restoration of an existing session.
+// Active sign-in is handled directly in loginWithEmail to avoid double-execution.
 supa.auth.onAuthStateChange(async (event, session) => {
-  if (session) {
-    await checkAdminAccess(session);
-  } else {
-    showAuthGate();
+  if (event === 'SIGNED_OUT') { _adminCheckDone = false; showAuthGate(); return; }
+  if (event === 'INITIAL_SESSION') {
+    if (session) await checkAdminAccess(session);
+    else showAuthGate();
   }
 });
 
 async function checkAdminAccess(session) {
-  // Verify the signed-in email is in the admin_users whitelist
-  const { data, error } = await supa
-    .from('admin_users')
-    .select('email')
-    .eq('email', session.user.email)
-    .maybeSingle();
+  if (_adminCheckDone) return;
+  _adminCheckDone = true;
+  try {
+    const { data, error } = await supa
+      .from('admin_users')
+      .select('email')
+      .eq('email', session.user.email)
+      .maybeSingle();
 
-  if (error || !data) {
-    document.getElementById('denied-email').textContent = session.user.email;
-    document.getElementById('auth-access-denied').classList.add('show');
-    await supa.auth.signOut();
-    return;
+    if (error || !data) {
+      document.getElementById('denied-email').textContent = session.user.email;
+      document.getElementById('auth-access-denied').classList.add('show');
+      _adminCheckDone = false;
+      await supa.auth.signOut();
+      return;
+    }
+    showAdmin(session);
+  } catch (e) {
+    _adminCheckDone = false;
+    showAuthError('Connection error — please try again.');
+    showAuthGate();
   }
-  showAdmin(session);
 }
 
 function showAdmin(session) {
@@ -774,15 +785,22 @@ async function loginWithEmail() {
   btn.disabled = true; btn.textContent = 'Signing in…';
   clearAuthError();
 
-  const { data, error } = await supa.auth.signInWithPassword({ email, password: pass });
-  if (error) {
-    showAuthError(error.message);
+  try {
+    const { data, error } = await supa.auth.signInWithPassword({ email, password: pass });
+    if (error) {
+      showAuthError(error.message);
+      btn.disabled = false; btn.textContent = 'Sign In →';
+      return;
+    }
+    if (data?.session) {
+      await checkAdminAccess(data.session);
+    } else {
+      showAuthError('Sign-in succeeded but no session was returned. Please try again.');
+      btn.disabled = false; btn.textContent = 'Sign In →';
+    }
+  } catch (e) {
+    showAuthError('Network error — check your connection and try again.');
     btn.disabled = false; btn.textContent = 'Sign In →';
-    return;
-  }
-  // Handle session directly — don't rely solely on onAuthStateChange (unreliable on GitHub Pages)
-  if (data?.session) {
-    await checkAdminAccess(data.session);
   }
 }
 
