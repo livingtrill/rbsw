@@ -774,12 +774,16 @@ async function loginWithEmail() {
   btn.disabled = true; btn.textContent = 'Signing in…';
   clearAuthError();
 
-  const { error } = await supa.auth.signInWithPassword({ email, password: pass });
+  const { data, error } = await supa.auth.signInWithPassword({ email, password: pass });
   if (error) {
     showAuthError(error.message);
     btn.disabled = false; btn.textContent = 'Sign In →';
+    return;
   }
-  // On success, onAuthStateChange fires and calls checkAdminAccess
+  // Handle session directly — don't rely solely on onAuthStateChange (unreliable on GitHub Pages)
+  if (data?.session) {
+    await checkAdminAccess(data.session);
+  }
 }
 
 async function logout() {
