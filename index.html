@@ -410,7 +410,8 @@ nav {
 
 .cat-emoji { font-size:2rem; display:block; margin-bottom:12px; position:relative; z-index:1; transition:transform 0.3s ease; }
 .cat-name { font-size:0.86rem; font-weight:600; color:#fff; position:relative; z-index:1; transition:color 0.2s ease; }
-.cat-cnt  { font-size:0.72rem; color:var(--muted); margin-top:4px; position:relative; z-index:1; }
+.cat-cnt  { font-size:0.72rem; color:var(--muted); margin-top:4px; position:relative; z-index:1; transition:opacity .2s; }
+.cat-cnt.hidden { display:none; }
 
 /* ── FILTER BAR ── */
 .filter-bar {
@@ -968,47 +969,47 @@ footer { background:var(--surface-2); border-top:1px solid var(--border); color:
       <div class="categories-grid" role="navigation" aria-label="Browse by industry">
         <div class="cat-card" onclick="filterByCategory('Food &amp; Restaurant')" tabindex="0" role="button">
           <span class="cat-emoji">🍽️</span>
-          <div class="cat-name">Food &amp; Restaurant</div><div class="cat-cnt">624 businesses</div>
+          <div class="cat-name">Food &amp; Restaurant</div><div class="cat-cnt" data-cat="Food &amp; Restaurant"></div>
         </div>
         <div class="cat-card" onclick="filterByCategory('Fashion &amp; Apparel')" tabindex="0" role="button">
           <span class="cat-emoji">👗</span>
-          <div class="cat-name">Fashion &amp; Apparel</div><div class="cat-cnt">287 businesses</div>
+          <div class="cat-name">Fashion &amp; Apparel</div><div class="cat-cnt" data-cat="Fashion &amp; Apparel"></div>
         </div>
         <div class="cat-card" onclick="filterByCategory('Health &amp; Wellness')" tabindex="0" role="button">
           <span class="cat-emoji">🌿</span>
-          <div class="cat-name">Health &amp; Wellness</div><div class="cat-cnt">391 businesses</div>
+          <div class="cat-name">Health &amp; Wellness</div><div class="cat-cnt" data-cat="Health &amp; Wellness"></div>
         </div>
         <div class="cat-card" onclick="filterByCategory('Technology')" tabindex="0" role="button">
           <span class="cat-emoji">💻</span>
-          <div class="cat-name">Technology</div><div class="cat-cnt">218 businesses</div>
+          <div class="cat-name">Technology</div><div class="cat-cnt" data-cat="Technology"></div>
         </div>
         <div class="cat-card" onclick="filterByCategory('Beauty &amp; Personal Care')" tabindex="0" role="button">
           <span class="cat-emoji">✨</span>
-          <div class="cat-name">Beauty &amp; Personal Care</div><div class="cat-cnt">445 businesses</div>
+          <div class="cat-name">Beauty &amp; Personal Care</div><div class="cat-cnt" data-cat="Beauty &amp; Personal Care"></div>
         </div>
         <div class="cat-card" onclick="filterByCategory('Art &amp; Creative')" tabindex="0" role="button">
           <span class="cat-emoji">🎨</span>
-          <div class="cat-name">Art &amp; Creative</div><div class="cat-cnt">173 businesses</div>
+          <div class="cat-name">Art &amp; Creative</div><div class="cat-cnt" data-cat="Art &amp; Creative"></div>
         </div>
         <div class="cat-card" onclick="filterByCategory('Finance &amp; Legal')" tabindex="0" role="button">
           <span class="cat-emoji">⚖️</span>
-          <div class="cat-name">Finance &amp; Legal</div><div class="cat-cnt">129 businesses</div>
+          <div class="cat-name">Finance &amp; Legal</div><div class="cat-cnt" data-cat="Finance &amp; Legal"></div>
         </div>
         <div class="cat-card" onclick="filterByCategory('Education &amp; Tutoring')" tabindex="0" role="button">
           <span class="cat-emoji">📚</span>
-          <div class="cat-name">Education &amp; Tutoring</div><div class="cat-cnt">208 businesses</div>
+          <div class="cat-name">Education &amp; Tutoring</div><div class="cat-cnt" data-cat="Education &amp; Tutoring"></div>
         </div>
         <div class="cat-card" onclick="filterByCategory('Freelancers')" tabindex="0" role="button">
           <span class="cat-emoji">💼</span>
-          <div class="cat-name">Freelancers</div><div class="cat-cnt">364 businesses</div>
+          <div class="cat-name">Freelancers</div><div class="cat-cnt" data-cat="Freelancers"></div>
         </div>
         <div class="cat-card" onclick="filterByCategory('Handyman Services')" tabindex="0" role="button">
           <span class="cat-emoji">🔧</span>
-          <div class="cat-name">Handyman Services</div><div class="cat-cnt">291 businesses</div>
+          <div class="cat-name">Handyman Services</div><div class="cat-cnt" data-cat="Handyman Services"></div>
         </div>
         <div class="cat-card" onclick="filterByCategory('Transportation &amp; Logistics')" tabindex="0" role="button">
           <span class="cat-emoji">🚛</span>
-          <div class="cat-name">Transportation &amp; Logistics</div><div class="cat-cnt">0 businesses</div>
+          <div class="cat-name">Transportation &amp; Logistics</div><div class="cat-cnt" data-cat="Transportation &amp; Logistics"></div>
         </div>
       </div>
     </div>
@@ -2338,6 +2339,28 @@ function showGridError() {
   </div>`;
 }
 
+/* ── CATEGORY COUNTS ── */
+function updateCategoryCounts(listings) {
+  const counts = {};
+  listings.forEach(b => { if (b.category) counts[b.category] = (counts[b.category] || 0) + 1; });
+  document.querySelectorAll('.cat-cnt[data-cat]').forEach(el => {
+    const n = counts[el.dataset.cat] || 0;
+    el.textContent = n + (n === 1 ? ' business' : ' businesses');
+  });
+}
+
+async function loadCategoryCountSetting() {
+  try {
+    const res = await fetch(
+      SUPABASE_URL + '/rest/v1/site_settings?key=eq.show_category_counts&select=value',
+      { headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer ' + SUPABASE_ANON } }
+    );
+    const data = await res.json();
+    const show = !data.length || data[0].value !== 'false';
+    document.querySelectorAll('.cat-cnt').forEach(el => el.classList.toggle('hidden', !show));
+  } catch { /* silently keep counts visible on error */ }
+}
+
 /* ── INIT ── */
 document.addEventListener('DOMContentLoaded', async () => {
   showGridLoading();
@@ -2356,6 +2379,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   visible = [...LISTINGS];
   renderGrid();
+  updateCategoryCounts(LISTINGS);
+  loadCategoryCountSetting();
 
   // Auto-open submission modal when arriving from mission.html CTA
   if (sessionStorage.getItem('openModal') === '1') {

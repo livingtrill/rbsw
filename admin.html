@@ -467,6 +467,9 @@ input, select, textarea { font-family: inherit; }
     <button class="tab-btn" onclick="switchTab('all')" id="tab-btn-all">
       All Listings <span class="tab-count" id="tc-all">0</span>
     </button>
+    <button class="tab-btn" onclick="switchTab('settings')" id="tab-btn-settings">
+      Site Settings
+    </button>
   </div>
 
   <!-- PENDING TAB -->
@@ -542,6 +545,28 @@ create policy "public_insert_takedown_requests"
           <tr><td colspan="7" class="empty-state" style="padding:40px;text-align:center;color:var(--muted)">Loading…</td></tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <!-- SETTINGS TAB -->
+  <div class="tab-panel" id="panel-settings">
+    <div style="max-width:560px">
+      <h3 style="font-family:var(--ff-display);font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:6px">Site Settings</h3>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:28px">Changes apply to the public directory immediately.</p>
+
+      <div style="display:flex;flex-direction:column;gap:1px;background:var(--border)">
+
+        <div style="background:var(--surface-2);padding:20px 22px;display:flex;align-items:center;justify-content:space-between;gap:24px">
+          <div>
+            <div style="font-weight:600;color:#fff;margin-bottom:3px">Show business counts on category cards</div>
+            <div style="font-size:0.8rem;color:var(--muted)">Displays "X businesses" under each niche card on the homepage. Hide while counts are low.</div>
+          </div>
+          <button class="featured-toggle" id="toggle-cat-counts" onclick="toggleSetting('show_category_counts', this)" title="Toggle category counts"></button>
+        </div>
+
+      </div>
+
+      <p style="font-size:0.75rem;color:var(--muted);margin-top:16px" id="settings-saved-msg"></p>
     </div>
   </div>
 
@@ -812,7 +837,31 @@ async function api(method, path, body) {
 // ── INIT ──────────────────────────────────────────────────────────────────────
 
 async function initAdmin() {
-  await Promise.all([loadStats(), loadPending(), loadTakedowns(), loadAll()]);
+  await Promise.all([loadStats(), loadPending(), loadTakedowns(), loadAll(), loadSiteSettings()]);
+}
+
+// ── SITE SETTINGS ─────────────────────────────────────────────────────────────
+
+async function loadSiteSettings() {
+  try {
+    const rows = await api('GET', '/rest/v1/site_settings?select=key,value');
+    rows.forEach(r => {
+      if (r.key === 'show_category_counts') {
+        document.getElementById('toggle-cat-counts')
+          ?.classList.toggle('on', r.value !== 'false');
+      }
+    });
+  } catch(e) { console.error('Settings load error', e); }
+}
+
+async function toggleSetting(key, btn) {
+  const isOn = btn.classList.toggle('on');
+  try {
+    await api('PATCH', `/rest/v1/site_settings?key=eq.${key}`, { value: String(isOn) });
+    const msg = document.getElementById('settings-saved-msg');
+    if (msg) { msg.textContent = 'Saved ' + new Date().toLocaleTimeString(); setTimeout(() => msg.textContent = '', 3000); }
+    toast(isOn ? 'Category counts visible' : 'Category counts hidden', 'success');
+  } catch(e) { btn.classList.toggle('on'); toast('Error: ' + e.message, 'error'); }
 }
 
 // ── STATS ─────────────────────────────────────────────────────────────────────
