@@ -50,13 +50,10 @@ input, select, textarea { font-family: inherit; }
   padding: 40px 36px; width: 100%; max-width: 420px;
 }
 .auth-logo {
-  font-family: var(--ff-display); font-size: 1.15rem; font-weight: 700;
-  display: flex; align-items: center; gap: 10px; margin-bottom: 28px;
+  display: flex; justify-content: center; margin-bottom: 28px;
 }
-.auth-logo-mark {
-  width: 28px; height: 28px; background: var(--green);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.75rem; font-weight: 800; color: #000;
+.auth-logo img {
+  height: 48px; width: auto;
 }
 .auth-box h2 {
   font-family: var(--ff-display); font-size: 1.3rem; font-weight: 700;
@@ -108,9 +105,7 @@ input, select, textarea { font-family: inherit; }
   display: flex; align-items: center; gap: 10px;
 }
 .nav-logo-mark {
-  width: 26px; height: 26px; background: var(--green);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.7rem; font-weight: 800; color: #000;
+  height: 26px; width: auto; display: block;
 }
 .nav-badge {
   font-size: 0.68rem; padding: 2px 8px; background: var(--surface-3);
@@ -399,8 +394,7 @@ input, select, textarea { font-family: inherit; }
 <div id="auth-gate">
   <div class="auth-box">
     <div class="auth-logo">
-      <div class="auth-logo-mark">BW</div>
-      Real Black Wall Street
+      <img src="https://res.cloudinary.com/dg7zncjcv/image/upload/v1776842338/RBWSLogo_vy1vb2.png" alt="Real Black Wall Street">
     </div>
     <h2>Admin Access</h2>
     <p>Sign in with your authorized admin account.</p>
@@ -428,7 +422,7 @@ input, select, textarea { font-family: inherit; }
 
   <nav class="admin-nav">
     <div class="nav-logo">
-      <div class="nav-logo-mark">BW</div>
+      <img class="nav-logo-mark" src="https://res.cloudinary.com/dg7zncjcv/image/upload/v1776842338/RBWSLogo_buildings_ywbl6a.png" alt="RBWS">
       Real Black Wall Street
       <span class="nav-badge">Admin</span>
     </div>
@@ -967,7 +961,7 @@ function pendingCard(b) {
         <div class="pc-field"><label>Owner</label><span class="${!b.owner_name?'empty':''}">${esc(val(b.owner_name))}</span></div>
         <div class="pc-field"><label>Email</label><span class="${!b.email?'empty':''}">${esc(val(b.email))}</span></div>
         <div class="pc-field"><label>Phone</label><span class="${!b.phone?'empty':''}">${esc(val(b.phone))}</span></div>
-        <div class="pc-field"><label>Website</label><span class="${!b.website?'empty':''}">${b.website ? `<a href="https://${esc(b.website)}" target="_blank" style="color:var(--green)">${esc(b.website)}</a>` : '—'}</span></div>
+        <div class="pc-field"><label>Website</label><span class="${!b.website?'empty':''}">${b.website ? `<a href="${/^https?:\/\//i.test(b.website) ? esc(b.website) : 'https://' + esc(b.website)}" target="_blank" rel="noopener" style="color:var(--green)">${esc(b.website)}</a>` : '—'}</span></div>
         <div class="pc-field"><label>Address</label><span class="${!b.address?'empty':''}">${esc(val(b.address))}</span></div>
         <div class="pc-field"><label>Hours</label><span class="${!b.hours?'empty':''}">${esc(val(b.hours))}</span></div>
         <div class="pc-field"><label>Price Range</label><span>${esc(val(b.price_range))}</span></div>
