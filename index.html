@@ -872,7 +872,6 @@ footer { background:var(--surface-2); border-top:1px solid var(--border); color:
     <ul class="nav-links">
       <li><a href="#" onclick="event.preventDefault();goHome();scrollToEl('#listings')">Browse</a></li>
       <li><a href="#" onclick="event.preventDefault();goHome();scrollToEl('#categories')">Categories</a></li>
-      <li><a href="mission.html">Our Mission</a></li>
     </ul>
     <div class="nav-cta">
       <button class="btn-primary-nav" onclick="openSubmitModal()">List Your Business</button>
@@ -1009,6 +1008,10 @@ footer { background:var(--surface-2); border-top:1px solid var(--border); color:
         <div class="cat-card" onclick="filterByCategory('Transportation &amp; Logistics')" tabindex="0" role="button">
           <span class="cat-emoji">🚛</span>
           <div class="cat-name">Transportation &amp; Logistics</div><div class="cat-cnt" data-cat="Transportation &amp; Logistics"></div>
+        </div>
+        <div class="cat-card" onclick="filterByCategory('Digital &amp; Social Media')" tabindex="0" role="button">
+          <span class="cat-emoji">📱</span>
+          <div class="cat-name">Digital &amp; Social Media</div><div class="cat-cnt" data-cat="Digital &amp; Social Media"></div>
         </div>
       </div>
     </div>
@@ -1199,7 +1202,7 @@ footer { background:var(--surface-2); border-top:1px solid var(--border); color:
         <div class="footer-col">
           <h4>Directory</h4>
           <ul class="footer-links">
-            <li><a href="#">All Businesses</a></li>
+            <li><a href="businesses.html">All Businesses</a></li>
             <li><a href="#">Food &amp; Restaurant</a></li>
             <li><a href="#">Technology</a></li>
             <li><a href="#">Freelancers</a></li>
@@ -1462,6 +1465,9 @@ footer { background:var(--surface-2); border-top:1px solid var(--border); color:
 
 <script>
 /* ── SUPABASE CONFIG ── */
+const PLACEHOLDER_IMG = 'https://res.cloudinary.com/dg7zncjcv/image/upload/v1776842338/RBWSLogo_buildings_ywbl6a.png';
+function imgUrl(url, params = '') { return url ? url + params : PLACEHOLDER_IMG; }
+
 const SUPABASE_URL  = 'https://coymqpazmzvxanabnhre.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNveW1xcGF6bXp2eGFuYWJuaHJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU4OTEzMDgsImV4cCI6MjA5MTQ2NzMwOH0.-SSDHl4DrGWfxfPIsPuUMr1NkSdoHVAZSis3KhSQEUk'; // Supabase Dashboard → Settings → API → anon public
 
@@ -1874,9 +1880,9 @@ function card(biz, idx) {
   onclick="showDetail(${biz.id})"
   itemscope itemtype="https://schema.org/LocalBusiness"
   style="transition-delay:${(idx % PER)*0.06}s">
-  <div class="card-img-wrap" data-src="${biz.image}&auto=format&w=600">
-    <div class="img-blur" style="background-image:url('${biz.image}&w=20&blur=200&auto=format')"></div>
-    <img class="lazy-img" data-src="${biz.image}&auto=format&w=600" alt="${biz.imageAlt}" itemprop="image">
+  <div class="card-img-wrap" data-src="${imgUrl(biz.image,'&auto=format&w=600')}">
+    <div class="img-blur" style="background-image:url('${imgUrl(biz.image,'&w=20&blur=200&auto=format')}')"></div>
+    <img class="lazy-img" data-src="${imgUrl(biz.image,'&auto=format&w=600')}" alt="${biz.imageAlt||biz.name}" itemprop="image" onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}'">
     <div class="card-local-badge">
       <div class="local-dot"></div>
       Independently Owned
@@ -1932,7 +1938,8 @@ function renderGrid() {
       const img  = card.querySelector('.lazy-img');
       if (img && img.dataset.src && !img.src) {
         const real = new Image();
-        real.onload = () => { img.src = img.dataset.src; wrap.classList.add('img-loaded'); };
+        real.onload  = () => { img.src = img.dataset.src; wrap.classList.add('img-loaded'); };
+        real.onerror = () => { img.src = PLACEHOLDER_IMG; wrap.classList.add('img-loaded'); };
         real.src = img.dataset.src;
       }
       io.unobserve(card);
@@ -2031,7 +2038,7 @@ function showDetail(id) {
   const dv = document.getElementById('detail-view');
   dv.innerHTML = `
 <div class="detail-hero-img">
-  <img src="${biz.image}&w=1400" alt="${biz.imageAlt}" loading="eager">
+  <img src="${imgUrl(biz.image,'&w=1400')}" alt="${biz.imageAlt||biz.name}" loading="eager" onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}'">
   <div class="detail-hero-overlay"></div>
   <div class="detail-hero-inner">
     <h1 class="detail-h1">${biz.name}</h1>
@@ -2063,8 +2070,7 @@ function showDetail(id) {
           <li class="fact-row"><span class="f-key">🕐 Hours</span><span class="f-val">${biz.hours}</span></li>
           <li class="fact-row"><span class="f-key">💰 Price Range</span><span class="f-val">${biz.price}</span></li>
           <li class="fact-row"><span class="f-key">🏷️ Industry</span><span class="f-val">${biz.category}</span></li>
-          <li class="fact-row"><span class="f-key">👤 Owner</span><span class="f-val">${biz.ownerName}</span></li>
-          <li class="fact-row"><span class="f-key">🌐 Website</span><span class="f-val"><a href="https://${biz.website}" target="_blank" rel="noopener" style="color:var(--green)">${biz.website}</a></span></li>
+          ${biz.website ? `<li class="fact-row"><span class="f-key">🌐 Website</span><span class="f-val"><a href="${/^https?:\/\//i.test(biz.website)?biz.website:'https://'+biz.website}" target="_blank" rel="noopener" style="color:var(--green)">${biz.website}</a></span></li>` : ''}
         </ul>
       </section>
 
@@ -2081,7 +2087,7 @@ function showDetail(id) {
         <div class="related-grid">
           ${related.map(r=>`
           <div class="rel-card" onclick="showDetail(${r.id})" role="link" tabindex="0">
-            <img class="rel-img" src="${r.image}&w=160" alt="${r.imageAlt}" loading="lazy">
+            <img class="rel-img" src="${imgUrl(r.image,'&w=160')}" alt="${r.imageAlt||r.name}" loading="lazy" onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}'">
             <div class="rel-info">
               <div class="rel-name">${r.name}</div>
               <div class="rel-sub">${r.category} · ${r.location}</div>
@@ -2106,9 +2112,8 @@ function showDetail(id) {
 
       <div class="sidebar-card">
         <h3>Contact &amp; Visit</h3>
-        <div class="contact-row"><div class="c-icon">📞</div><a href="tel:${biz.phone}">${biz.phone}</a></div>
-        <div class="contact-row"><div class="c-icon">✉️</div><a href="mailto:${biz.email}" style="font-size:0.82rem;word-break:break-all">${biz.email}</a></div>
-        <div class="contact-row"><div class="c-icon">🌐</div><a href="https://${biz.website}" target="_blank" rel="noopener">${biz.website}</a></div>
+        ${biz.phone ? `<div class="contact-row"><div class="c-icon">📞</div><a href="tel:${biz.phone}">${biz.phone}</a></div>` : ''}
+        ${biz.website ? `<div class="contact-row"><div class="c-icon">🌐</div><a href="${/^https?:\/\//i.test(biz.website)?biz.website:'https://'+biz.website}" target="_blank" rel="noopener">${biz.website}</a></div>` : ''}
         <div class="contact-row"><div class="c-icon">📍</div><span style="font-size:0.83rem">${biz.address}</span></div>
         <div class="map-placeholder" role="img" aria-label="Map location of ${biz.name}">
           <div style="font-size:1.8rem;margin-bottom:6px">🗺️</div>

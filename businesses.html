@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All Businesses — Real Black Wall Street</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --green:      #22c55e;
+  --green-dim:  rgba(34,197,94,.12);
+  --surface-1:  #0a0a0a;
+  --surface-2:  #111113;
+  --surface-3:  #1a1a1f;
+  --surface-4:  #22222a;
+  --border:     rgba(255,255,255,.08);
+  --border-med: rgba(255,255,255,.14);
+  --muted:      rgba(255,255,255,.45);
+  --ff-display: 'Space Grotesk', sans-serif;
+  --ff-body:    'Inter', sans-serif;
+  --t:          0.2s ease;
+}
+
+html, body {
+  height: 100%;
+  background: var(--surface-1);
+  color: #fff;
+  font-family: var(--ff-body);
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+.top-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 58px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+  background: rgba(10,10,10,.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--ff-display); font-size: 1.1rem; font-weight: 700;
+  color: #fff; text-decoration: none;
+}
+.nav-logo img { height: 28px; width: auto; }
+.btn-back {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 14px;
+  background: transparent; border: 1px solid var(--border-med);
+  color: var(--muted); font-size: 0.82rem; font-family: var(--ff-body);
+  cursor: pointer; transition: all var(--t);
+}
+.btn-back:hover { border-color: var(--green); color: var(--green); }
+.nav-counter {
+  font-size: 0.78rem; color: var(--muted);
+  font-family: var(--ff-body);
+}
+
+/* ── STAGE ── */
+.stage {
+  min-height: 100vh;
+  padding-top: 58px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 32px;
+  padding-bottom: 40px;
+}
+
+.stage-heading {
+  text-align: center;
+  padding-top: 20px;
+}
+.stage-heading h1 {
+  font-family: var(--ff-display); font-size: clamp(1.5rem,3vw,2.2rem);
+  font-weight: 700; letter-spacing: -0.02em;
+}
+.stage-heading h1 em { font-style: normal; color: var(--green); }
+.stage-heading p { font-size: 0.875rem; color: var(--muted); margin-top: 6px; }
+
+/* ── CARD STACK ── */
+.stack-wrap {
+  position: relative;
+  width: 340px;
+  height: 500px;
+}
+
+.biz-card-stack {
+  position: absolute;
+  inset: 0;
+  width: 340px;
+  height: 500px;
+  border-radius: 20px;
+  border: 1px solid var(--border-med);
+  background: var(--surface-2);
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0,0,0,.6);
+  transition: transform 0.32s cubic-bezier(.22,.68,0,1.2), opacity 0.32s ease;
+  will-change: transform;
+  user-select: none;
+}
+
+.biz-card-stack.is-front  { z-index: 3; cursor: grab; }
+.biz-card-stack.is-middle { z-index: 2; pointer-events: none; }
+.biz-card-stack.is-back   { z-index: 1; pointer-events: none; }
+.biz-card-stack.is-gone   { z-index: 0; pointer-events: none; }
+.biz-card-stack.is-front.dragging { cursor: grabbing; transition: none; }
+
+/* position variants */
+.biz-card-stack.is-front  { transform: rotate(-5deg) translate(0,0); }
+.biz-card-stack.is-middle { transform: rotate(0deg)  translate(40px, 12px); }
+.biz-card-stack.is-back   { transform: rotate(5deg)  translate(80px, 24px); }
+
+/* card inner layout */
+.card-img {
+  width: 100%; height: 200px;
+  object-fit: cover; display: block;
+  background: var(--surface-3);
+  flex-shrink: 0;
+}
+.card-img-placeholder {
+  width: 100%; height: 200px;
+  background: var(--surface-3);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.card-img-placeholder img { height: 64px; width: auto; opacity: 0.4; }
+
+.card-body {
+  padding: 18px 20px 20px;
+  display: flex; flex-direction: column; gap: 8px;
+  flex: 1;
+}
+.card-cat-badge {
+  display: inline-flex; align-items: center;
+  padding: 3px 10px; border-radius: 99px;
+  background: var(--green-dim); border: 1px solid rgba(34,197,94,.25);
+  color: var(--green); font-size: 0.7rem; font-weight: 600;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  width: fit-content;
+}
+.card-name {
+  font-family: var(--ff-display); font-size: 1.2rem; font-weight: 700;
+  color: #fff; line-height: 1.2; letter-spacing: -0.01em;
+}
+.card-loc {
+  font-size: 0.78rem; color: var(--muted);
+  display: flex; align-items: center; gap: 5px;
+}
+.card-desc {
+  font-size: 0.8rem; color: rgba(255,255,255,.6); line-height: 1.55;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 10px; border-top: 1px solid var(--border);
+  margin-top: auto;
+}
+.card-meta {
+  display: flex; align-items: center; gap: 10px;
+}
+.card-price {
+  font-size: 0.78rem; color: var(--muted); font-weight: 500;
+}
+.card-rating {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 0.78rem; color: #f59e0b;
+}
+.card-btn {
+  padding: 6px 14px;
+  background: var(--green); color: #000;
+  font-size: 0.75rem; font-weight: 700;
+  border: none; cursor: pointer; border-radius: 4px;
+  font-family: var(--ff-body); text-decoration: none;
+  transition: background var(--t);
+}
+.card-btn:hover { background: #16a34a; }
+
+/* swipe exit animation */
+@keyframes swipeLeft  { to { transform: rotate(-25deg) translateX(-140%) translateY(-10%); opacity: 0; } }
+@keyframes swipeRight { to { transform: rotate( 25deg) translateX( 140%) translateY(-10%); opacity: 0; } }
+.exit-left  { animation: swipeLeft  0.38s ease forwards; }
+.exit-right { animation: swipeRight 0.38s ease forwards; }
+
+/* drag ghost */
+.drag-hint {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.7rem; color: rgba(255,255,255,.2);
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.drag-hint.hidden { opacity: 0; }
+
+/* ── CONTROLS ── */
+.controls {
+  display: flex; align-items: center; gap: 16px;
+}
+.ctrl-btn {
+  width: 48px; height: 48px; border-radius: 50%;
+  border: 1px solid var(--border-med);
+  background: var(--surface-3);
+  color: #fff; font-size: 1.2rem;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all var(--t);
+}
+.ctrl-btn:hover { border-color: var(--green); color: var(--green); }
+.ctrl-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.ctrl-label {
+  font-size: 0.78rem; color: var(--muted); text-align: center; min-width: 80px;
+}
+
+/* ── FILTERS ── */
+.filter-bar {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center;
+  max-width: 600px;
+}
+.filter-pill {
+  padding: 5px 14px; border-radius: 99px;
+  border: 1px solid var(--border);
+  background: transparent; color: var(--muted);
+  font-size: 0.72rem; font-family: var(--ff-body);
+  cursor: pointer; transition: all var(--t);
+}
+.filter-pill:hover,
+.filter-pill.active { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+
+/* ── LOADING / EMPTY ── */
+.state-msg {
+  text-align: center; color: var(--muted);
+  padding: 40px 20px;
+}
+.spinner {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 3px solid var(--border);
+  border-top-color: var(--green);
+  animation: spin 0.7s linear infinite;
+  margin: 0 auto 16px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── DONE STATE ── */
+.done-card {
+  width: 340px; height: 500px;
+  border-radius: 20px; border: 1px solid var(--border-med);
+  background: var(--surface-2);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 16px; text-align: center; padding: 32px;
+}
+.done-icon { font-size: 3rem; }
+.done-card h2 { font-family: var(--ff-display); font-size: 1.3rem; }
+.done-card p  { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+.btn-restart {
+  margin-top: 8px; padding: 10px 24px;
+  background: var(--green); color: #000;
+  font-weight: 700; font-size: 0.875rem;
+  border: none; border-radius: 6px; cursor: pointer;
+  font-family: var(--ff-body); transition: background var(--t);
+}
+.btn-restart:hover { background: #16a34a; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 420px) {
+  .stack-wrap, .biz-card-stack, .done-card { width: 300px; }
+  .biz-card-stack.is-middle { transform: rotate(0deg) translate(28px, 10px); }
+  .biz-card-stack.is-back   { transform: rotate(5deg) translate(56px, 20px); }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <a href="index.html" class="nav-logo">
+    <img src="https://res.cloudinary.com/dg7zncjcv/image/upload/v1776842338/RBWSLogo_buildings_ywbl6a.png" alt="RBWS">
+    Real Black Wall Street
+  </a>
+  <span class="nav-counter" id="nav-counter"></span>
+  <button class="btn-back" onclick="window.location.href='index.html'">
+    ← Back
+  </button>
+</nav>
+
+<!-- STAGE -->
+<main class="stage">
+
+  <div class="stage-heading">
+    <h1>Discover <em>Every Business</em></h1>
+    <p>Swipe through verified minority-owned businesses across the country</p>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-pill active" onclick="setFilter('', this)">All</button>
+    <button class="filter-pill" onclick="setFilter('Food &amp; Restaurant', this)">Food</button>
+    <button class="filter-pill" onclick="setFilter('Fashion &amp; Apparel', this)">Fashion</button>
+    <button class="filter-pill" onclick="setFilter('Technology', this)">Tech</button>
+    <button class="filter-pill" onclick="setFilter('Health &amp; Wellness', this)">Health</button>
+    <button class="filter-pill" onclick="setFilter('Beauty &amp; Personal Care', this)">Beauty</button>
+    <button class="filter-pill" onclick="setFilter('Art &amp; Creative', this)">Art</button>
+    <button class="filter-pill" onclick="setFilter('Finance &amp; Legal', this)">Finance</button>
+    <button class="filter-pill" onclick="setFilter('Digital &amp; Social Media', this)">Digital</button>
+  </div>
+
+  <!-- CARD STACK -->
+  <div id="stack-container">
+    <div class="state-msg">
+      <div class="spinner"></div>
+      <p>Loading businesses…</p>
+    </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls" id="controls" style="display:none">
+    <button class="ctrl-btn" id="btn-prev" onclick="prevCard()" title="Previous">←</button>
+    <span class="ctrl-label" id="ctrl-label"></span>
+    <button class="ctrl-btn" id="btn-next" onclick="nextCard()" title="Next">→</button>
+  </div>
+
+</main>
+
+<script>
+const SUPABASE_URL  = 'https://coymqpazmzvxanabnhre.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNveW1xcGF6bXp2eGFuYWJuaHJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU4OTEzMDgsImV4cCI6MjA5MTQ2NzMwOH0.-SSDHl4DrGWfxfPIsPuUMr1NkSdoHVAZSis3KhSQEUk';
+const PLACEHOLDER   = 'https://res.cloudinary.com/dg7zncjcv/image/upload/v1776842338/RBWSLogo_buildings_ywbl6a.png';
+
+let allBiz     = [];
+let filtered   = [];
+let currentIdx = 0;
+let activeFilter = '';
+
+async function fetchAll() {
+  const url = SUPABASE_URL + '/rest/v1/businesses'
+    + '?select=id,name,short_desc,city,state_code,category_id,price_range,rating,image_url,website,phone'
+    + '&status=eq.approved&order=featured.desc,rating.desc';
+  const res = await fetch(url, {
+    headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer ' + SUPABASE_ANON }
+  });
+  if (!res.ok) throw new Error('Failed to fetch');
+  return res.json();
+}
+
+const CAT = {1:'Food & Restaurant',2:'Fashion & Apparel',3:'Health & Wellness',4:'Technology',
+  5:'Beauty & Personal Care',6:'Art & Creative',7:'Finance & Legal',8:'Education & Tutoring',
+  9:'Freelancers',10:'Handyman Services',11:'Transportation & Logistics',13:'Digital & Social Media'};
+
+function setFilter(cat, btn) {
+  activeFilter = cat;
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  filtered = cat ? allBiz.filter(b => CAT[b.category_id] === cat) : allBiz;
+  currentIdx = 0;
+  renderStack();
+}
+
+function updateCounter() {
+  const total = filtered.length;
+  const shown = Math.min(currentIdx + 1, total);
+  document.getElementById('nav-counter').textContent = total ? `${shown} / ${total}` : '';
+  document.getElementById('ctrl-label').textContent  = total ? `${shown} of ${total}` : '';
+  document.getElementById('btn-prev').disabled = currentIdx <= 0;
+  document.getElementById('btn-next').disabled = currentIdx >= total - 1;
+}
+
+function cardHTML(biz, posClass) {
+  const cat  = CAT[biz.category_id] || '';
+  const loc  = [biz.city, biz.state_code].filter(Boolean).join(', ');
+  const stars = biz.rating ? '★ ' + parseFloat(biz.rating).toFixed(1) : '';
+  const href  = biz.website
+    ? (/^https?:\/\//i.test(biz.website) ? biz.website : 'https://' + biz.website)
+    : null;
+  const imgSrc = biz.image_url || null;
+
+  return `
+<div class="biz-card-stack ${posClass}" data-id="${biz.id}">
+  ${imgSrc
+    ? `<img class="card-img" src="${imgSrc}" alt="${esc(biz.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+    : ''}
+  <div class="card-img-placeholder" style="${imgSrc ? 'display:none' : ''}">
+    <img src="${PLACEHOLDER}" alt="placeholder">
+  </div>
+  <div class="card-body">
+    ${cat ? `<span class="card-cat-badge">${esc(cat)}</span>` : ''}
+    <div class="card-name">${esc(biz.name)}</div>
+    <div class="card-loc">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      ${esc(loc)}
+    </div>
+    ${biz.short_desc ? `<p class="card-desc">${esc(biz.short_desc)}</p>` : ''}
+    <div class="card-footer">
+      <div class="card-meta">
+        ${biz.price_range ? `<span class="card-price">${esc(biz.price_range)}</span>` : ''}
+        ${stars ? `<span class="card-rating">${stars}</span>` : ''}
+      </div>
+      ${href ? `<a class="card-btn" href="${href}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Visit →</a>` : ''}
+    </div>
+  </div>
+</div>`;
+}
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderStack() {
+  const container = document.getElementById('stack-container');
+  const controls  = document.getElementById('controls');
+  updateCounter();
+
+  if (!filtered.length) {
+    container.innerHTML = `<div class="state-msg"><p>No businesses found in this category yet.</p></div>`;
+    controls.style.display = 'none';
+    return;
+  }
+
+  if (currentIdx >= filtered.length) {
+    container.innerHTML = doneHTML();
+    controls.style.display = 'none';
+    return;
+  }
+
+  controls.style.display = 'flex';
+
+  const front  = filtered[currentIdx];
+  const middle = filtered[currentIdx + 1];
+  const back   = filtered[currentIdx + 2];
+
+  container.innerHTML = `
+    <div class="stack-wrap" id="stack-wrap">
+      ${back   ? cardHTML(back,   'is-back')   : ''}
+      ${middle ? cardHTML(middle, 'is-middle') : ''}
+      ${cardHTML(front, 'is-front')}
+    </div>`;
+
+  attachDrag();
+}
+
+function doneHTML() {
+  return `
+  <div class="done-card">
+    <div class="done-icon">🏁</div>
+    <h2>You've seen them all!</h2>
+    <p>You've browsed every verified business${activeFilter ? ' in this category' : ''}.<br>More are added regularly — check back soon.</p>
+    <button class="btn-restart" onclick="restartStack()">Start Over ↺</button>
+  </div>`;
+}
+
+function restartStack() {
+  currentIdx = 0;
+  renderStack();
+}
+
+function nextCard() {
+  if (currentIdx >= filtered.length - 1) return;
+  animateExit('left', () => {
+    currentIdx++;
+    renderStack();
+  });
+}
+
+function prevCard() {
+  if (currentIdx <= 0) return;
+  currentIdx--;
+  renderStack();
+}
+
+function animateExit(dir, cb) {
+  const front = document.querySelector('.is-front');
+  if (!front) { cb(); return; }
+  front.classList.add(dir === 'left' ? 'exit-left' : 'exit-right');
+  front.addEventListener('animationend', cb, { once: true });
+}
+
+// ── DRAG / SWIPE ──────────────────────────────────────────────────────────────
+function attachDrag() {
+  const card = document.querySelector('.is-front');
+  if (!card) return;
+
+  let startX = 0, startY = 0, isDragging = false;
+  let currentX = 0;
+  const THRESHOLD = 100;
+
+  function onStart(x, y) {
+    startX = x; startY = y;
+    isDragging = true;
+    card.classList.add('dragging');
+  }
+
+  function onMove(x) {
+    if (!isDragging) return;
+    currentX = x - startX;
+    const rotate = currentX * 0.08;
+    card.style.transform = `rotate(calc(-5deg + ${rotate}deg)) translateX(${currentX}px)`;
+  }
+
+  function onEnd(x) {
+    if (!isDragging) return;
+    isDragging = false;
+    card.classList.remove('dragging');
+    const delta = x - startX;
+    if (delta < -THRESHOLD) {
+      animateExit('left', () => { currentIdx++; renderStack(); });
+    } else if (delta > THRESHOLD && currentIdx > 0) {
+      animateExit('right', () => { currentIdx--; renderStack(); });
+    } else {
+      card.style.transition = 'transform 0.35s cubic-bezier(.22,.68,0,1.2)';
+      card.style.transform  = 'rotate(-5deg) translateX(0)';
+      setTimeout(() => { card.style.transition = ''; card.style.transform = ''; }, 380);
+    }
+    currentX = 0;
+  }
+
+  // Mouse
+  card.addEventListener('mousedown', e => { e.preventDefault(); onStart(e.clientX, e.clientY); });
+  window.addEventListener('mousemove', e => onMove(e.clientX));
+  window.addEventListener('mouseup',   e => onEnd(e.clientX), { once: true });
+
+  // Touch
+  card.addEventListener('touchstart', e => { const t = e.touches[0]; onStart(t.clientX, t.clientY); }, { passive: true });
+  card.addEventListener('touchmove',  e => { const t = e.touches[0]; onMove(t.clientX); }, { passive: true });
+  card.addEventListener('touchend',   e => { const t = e.changedTouches[0]; onEnd(t.clientX); });
+}
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextCard();
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   prevCard();
+});
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+(async () => {
+  try {
+    allBiz   = await fetchAll();
+    filtered = allBiz;
+    renderStack();
+  } catch (e) {
+    document.getElementById('stack-container').innerHTML =
+      `<div class="state-msg"><p style="color:#ef4444">Failed to load businesses. Please try again.</p></div>`;
+  }
+})();
+</script>
+</body>
+</html>
