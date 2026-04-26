@@ -98,6 +98,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 <style>
 /* ─── TOKENS ─── */
@@ -1403,6 +1404,11 @@ footer { background:var(--surface-2); border-top:1px solid var(--border); color:
 
         </div><!-- /form-grid -->
 
+        <!-- Honeypot: bots fill this, humans don't see it -->
+        <input type="text" name="website_url" id="hp-submit" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0;height:0;width:0" aria-hidden="true">
+
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAADCrD5sOBy5136j6" data-theme="dark" style="margin-bottom:16px"></div>
+
         <div class="form-actions">
           <button type="button" class="btn-cancel" onclick="closeSubmitModal()">Cancel</button>
           <button type="submit" class="btn-submit" id="btn-submit-main">Submit Listing →</button>
@@ -1455,6 +1461,11 @@ footer { background:var(--surface-2); border-top:1px solid var(--border); color:
           </div>
 
         </div><!-- /form-grid -->
+
+        <!-- Honeypot: bots fill this, humans don't see it -->
+        <input type="text" name="website_url" id="hp-takedown" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0;height:0;width:0" aria-hidden="true">
+
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAADCrD5sOBy5136j6" data-theme="dark" style="margin-bottom:16px"></div>
 
         <div class="form-actions">
           <button type="button" class="btn-cancel" onclick="closeTakedownModal()">Cancel</button>
@@ -2167,31 +2178,51 @@ function closeSubmitModal() {
 async function handleSubmit(e) {
   e.preventDefault();
   if (!validateForm()) return;
+
+  // Honeypot check — bots fill this field, humans don't
+  if (document.getElementById('hp-submit').value) return;
+
+  // Rate limiting — prevent repeat submissions within 2 minutes
+  const lastSub = parseInt(localStorage.getItem('rbsw_last_submit') || '0');
+  if (Date.now() - lastSub < 120000) {
+    alert('You submitted recently. Please wait a moment before trying again.');
+    return;
+  }
+
+  // Turnstile verification
+  const tsToken = document.querySelector('#submit-form [name="cf-turnstile-response"]')?.value;
+  if (!tsToken) {
+    alert('Please complete the security check before submitting.');
+    return;
+  }
+
   const btn = document.getElementById('btn-submit-main');
   btn.disabled = true;
   btn.textContent = 'Submitting…';
 
   const payload = {
-    businessName: document.getElementById('f-biz-name').value.trim(),
-    category:     document.getElementById('f-biz-cat').value,
-    priceRange:   document.getElementById('f-biz-price').value,
-    description:  document.getElementById('f-biz-desc').value.trim(),
-    state:        document.getElementById('f-biz-state').value,
-    city:         document.getElementById('f-biz-city').value.trim(),
-    ownerName:    document.getElementById('f-biz-owner').value.trim(),
-    email:        document.getElementById('f-biz-email').value.trim(),
-    website:      document.getElementById('f-biz-web').value.trim(),
-    instagram:    document.getElementById('f-biz-instagram').value.trim(),
-    submittedAt:  new Date().toISOString(),
+    businessName:    document.getElementById('f-biz-name').value.trim(),
+    category:        document.getElementById('f-biz-cat').value,
+    priceRange:      document.getElementById('f-biz-price').value,
+    description:     document.getElementById('f-biz-desc').value.trim(),
+    state:           document.getElementById('f-biz-state').value,
+    city:            document.getElementById('f-biz-city').value.trim(),
+    ownerName:       document.getElementById('f-biz-owner').value.trim(),
+    email:           document.getElementById('f-biz-email').value.trim(),
+    website:         document.getElementById('f-biz-web').value.trim(),
+    instagram:       document.getElementById('f-biz-instagram').value.trim(),
+    submittedAt:     new Date().toISOString(),
+    turnstileToken:  tsToken,
   };
 
   try {
     const res = await fetch('https://n8n.livingtrillonline.com/webhook/rbsw-business-submission', {
       method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-RBWS-Source': 'listing-form' },
       body:    JSON.stringify(payload),
     });
     if (!res.ok) throw new Error('Webhook returned ' + res.status);
+    localStorage.setItem('rbsw_last_submit', String(Date.now()));
     document.getElementById('submit-form').style.display = 'none';
     document.getElementById('form-success').classList.add('show');
   } catch (err) {
@@ -2290,6 +2321,23 @@ async function handleTakedown(e) {
   });
   if (!valid) return;
 
+  // Honeypot check
+  if (document.getElementById('hp-takedown').value) return;
+
+  // Rate limiting
+  const lastTd = parseInt(localStorage.getItem('rbsw_last_takedown') || '0');
+  if (Date.now() - lastTd < 120000) {
+    alert('You submitted recently. Please wait a moment before trying again.');
+    return;
+  }
+
+  // Turnstile verification
+  const tsToken = document.querySelector('#takedown-form [name="cf-turnstile-response"]')?.value;
+  if (!tsToken) {
+    alert('Please complete the security check before submitting.');
+    return;
+  }
+
   const btn = document.getElementById('btn-takedown-submit');
   btn.disabled = true;
   btn.textContent = 'Submitting…';
@@ -2297,14 +2345,16 @@ async function handleTakedown(e) {
   try {
     const res = await fetch('https://n8n.livingtrillonline.com/webhook/rbsw-takedown-request', {
       method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-RBWS-Source': 'takedown-form' },
       body:    JSON.stringify({
-        businessName: nameEl.value.trim(),
-        email:        emailEl.value.trim(),
-        submittedAt:  new Date().toISOString(),
+        businessName:   nameEl.value.trim(),
+        email:          emailEl.value.trim(),
+        submittedAt:    new Date().toISOString(),
+        turnstileToken: tsToken,
       }),
     });
     if (!res.ok) throw new Error('Webhook returned ' + res.status);
+    localStorage.setItem('rbsw_last_takedown', String(Date.now()));
     document.getElementById('takedown-form').style.display = 'none';
     document.getElementById('takedown-success').classList.add('show');
   } catch (err) {
