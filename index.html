@@ -3,6 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'none';
+  script-src  'self' 'unsafe-inline' https://challenges.cloudflare.com;
+  style-src   'self' 'unsafe-inline' https://fonts.googleapis.com;
+  font-src    https://fonts.gstatic.com;
+  img-src     'self' data: https: blob:;
+  connect-src https://coymqpazmzvxanabnhre.supabase.co
+              https://n8n.livingtrillonline.com
+              https://challenges.cloudflare.com;
+  frame-src   https://challenges.cloudflare.com;
+  object-src  'none';
+  base-uri    'self';
+  form-action 'self';
+">
 <meta name="description" content="Real Black Wall Street — The nationwide small business directory. Discover and support businesses across every industry and niche.">
 <meta property="og:title" content="Real Black Wall Street — Small Business Directory">
 <meta property="og:description" content="Discover and support small businesses across every industry nationwide — from food and fashion to tech and finance.">
@@ -300,13 +314,43 @@ nav {
   opacity: 0; animation: riseIn 0.9s 0.95s forwards;
 }
 .qf-btn {
-  padding: 6px 14px;
-  background: transparent;
-  border: 1px solid var(--border-med);
-  font-size: 0.775rem; font-weight: 500; color: var(--muted);
-  transition: all var(--t); cursor: pointer;
+  position: relative; overflow: hidden; isolation: isolate;
+  padding: 6px 16px; border-radius: 99px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+  font-size: 0.775rem; font-weight: 500; color: rgba(255,255,255,0.55);
+  font-family: var(--ff-body); cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
 }
-.qf-btn:hover { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+.qf-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(110deg, transparent 35%, rgba(255,255,255,0.1) 50%, transparent 65%);
+  background-size: 200% 100%;
+  background-position: 200% 0;
+  animation: qf-sweep 3.5s ease infinite;
+  pointer-events: none; border-radius: inherit;
+}
+@keyframes qf-sweep {
+  0%   { background-position: 200% 0; }
+  35%  { background-position: -100% 0; }
+  100% { background-position: -100% 0; }
+}
+.qf-btn:hover {
+  color: #fff;
+  border-color: rgba(34,197,94,0.55);
+  background: linear-gradient(135deg, rgba(34,197,94,0.14) 0%, rgba(34,197,94,0.06) 100%);
+}
+.qf-btn:hover::before {
+  background: linear-gradient(110deg, transparent 35%, rgba(34,197,94,0.2) 50%, transparent 65%);
+  background-size: 200% 100%;
+  animation: qf-sweep-green 3.5s ease infinite;
+}
+@keyframes qf-sweep-green {
+  0%   { background-position: 200% 0; }
+  35%  { background-position: -100% 0; }
+  100% { background-position: -100% 0; }
+}
 
 .hero-stats {
   position: absolute; bottom: 0; left: 0; right: 0; z-index: 10;

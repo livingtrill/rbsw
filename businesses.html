@@ -3,6 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'none';
+  script-src  'self';
+  style-src   'self' 'unsafe-inline' https://fonts.googleapis.com;
+  font-src    https://fonts.gstatic.com;
+  img-src     'self' data: https: blob:;
+  connect-src https://coymqpazmzvxanabnhre.supabase.co;
+  frame-src   'none';
+  object-src  'none';
+  base-uri    'self';
+  form-action 'self';
+">
 <title>All Businesses — Real Black Wall Street</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -219,14 +231,48 @@ html, body {
   max-width: 600px;
 }
 .filter-pill {
-  padding: 5px 14px; border-radius: 99px;
-  border: 1px solid var(--border);
-  background: transparent; color: var(--muted);
-  font-size: 0.72rem; font-family: var(--ff-body);
-  cursor: pointer; transition: all var(--t);
+  position: relative; overflow: hidden; isolation: isolate;
+  padding: 6px 16px; border-radius: 99px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+  font-size: 0.72rem; font-weight: 500; color: rgba(255,255,255,0.55);
+  font-family: var(--ff-body); cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
 }
-.filter-pill:hover,
-.filter-pill.active { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+.filter-pill::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(110deg, transparent 35%, rgba(255,255,255,0.1) 50%, transparent 65%);
+  background-size: 200% 100%;
+  background-position: 200% 0;
+  animation: pill-sweep 3.5s ease infinite;
+  pointer-events: none; border-radius: inherit;
+}
+@keyframes pill-sweep {
+  0%   { background-position: 200% 0; }
+  35%  { background-position: -100% 0; }
+  100% { background-position: -100% 0; }
+}
+.filter-pill:hover {
+  color: #fff;
+  border-color: rgba(255,255,255,0.22);
+  background: linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 100%);
+}
+.filter-pill.active {
+  color: #fff;
+  border-color: rgba(34,197,94,0.55);
+  background: linear-gradient(135deg, rgba(34,197,94,0.14) 0%, rgba(34,197,94,0.06) 100%);
+}
+.filter-pill.active::before {
+  background: linear-gradient(110deg, transparent 35%, rgba(34,197,94,0.2) 50%, transparent 65%);
+  background-size: 200% 100%;
+  animation: pill-sweep-green 3.5s ease infinite;
+}
+@keyframes pill-sweep-green {
+  0%   { background-position: 200% 0; }
+  35%  { background-position: -100% 0; }
+  100% { background-position: -100% 0; }
+}
 
 /* ── LOADING / EMPTY ── */
 .state-msg {
@@ -279,9 +325,7 @@ html, body {
     Real Black Wall Street
   </a>
   <span class="nav-counter" id="nav-counter"></span>
-  <button class="btn-back" onclick="window.location.href='index.html'">
-    ← Back
-  </button>
+  <button class="btn-back" id="btn-back">← Back</button>
 </nav>
 
 <!-- STAGE -->
@@ -294,15 +338,15 @@ html, body {
 
   <!-- FILTERS -->
   <div class="filter-bar" id="filter-bar">
-    <button class="filter-pill active" onclick="setFilter('', this)">All</button>
-    <button class="filter-pill" onclick="setFilter('Food &amp; Restaurant', this)">Food</button>
-    <button class="filter-pill" onclick="setFilter('Fashion &amp; Apparel', this)">Fashion</button>
-    <button class="filter-pill" onclick="setFilter('Technology', this)">Tech</button>
-    <button class="filter-pill" onclick="setFilter('Health &amp; Wellness', this)">Health</button>
-    <button class="filter-pill" onclick="setFilter('Beauty &amp; Personal Care', this)">Beauty</button>
-    <button class="filter-pill" onclick="setFilter('Art &amp; Creative', this)">Art</button>
-    <button class="filter-pill" onclick="setFilter('Finance &amp; Legal', this)">Finance</button>
-    <button class="filter-pill" onclick="setFilter('Digital &amp; Social Media', this)">Digital</button>
+    <button class="filter-pill active" data-cat="">All</button>
+    <button class="filter-pill" data-cat="Food &amp; Restaurant">Food</button>
+    <button class="filter-pill" data-cat="Fashion &amp; Apparel">Fashion</button>
+    <button class="filter-pill" data-cat="Technology">Tech</button>
+    <button class="filter-pill" data-cat="Health &amp; Wellness">Health</button>
+    <button class="filter-pill" data-cat="Beauty &amp; Personal Care">Beauty</button>
+    <button class="filter-pill" data-cat="Art &amp; Creative">Art</button>
+    <button class="filter-pill" data-cat="Finance &amp; Legal">Finance</button>
+    <button class="filter-pill" data-cat="Digital &amp; Social Media">Digital</button>
   </div>
 
   <!-- CARD STACK -->
@@ -315,233 +359,13 @@ html, body {
 
   <!-- CONTROLS -->
   <div class="controls" id="controls" style="display:none">
-    <button class="ctrl-btn" id="btn-prev" onclick="prevCard()" title="Previous">←</button>
+    <button class="ctrl-btn" id="btn-prev" title="Previous">←</button>
     <span class="ctrl-label" id="ctrl-label"></span>
-    <button class="ctrl-btn" id="btn-next" onclick="nextCard()" title="Next">→</button>
+    <button class="ctrl-btn" id="btn-next" title="Next">→</button>
   </div>
 
 </main>
 
-<script>
-const SUPABASE_URL  = 'https://coymqpazmzvxanabnhre.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNveW1xcGF6bXp2eGFuYWJuaHJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU4OTEzMDgsImV4cCI6MjA5MTQ2NzMwOH0.-SSDHl4DrGWfxfPIsPuUMr1NkSdoHVAZSis3KhSQEUk';
-const PLACEHOLDER   = 'https://res.cloudinary.com/dg7zncjcv/image/upload/v1776842338/RBWSLogo_buildings_ywbl6a.png';
-
-let allBiz     = [];
-let filtered   = [];
-let currentIdx = 0;
-let activeFilter = '';
-
-async function fetchAll() {
-  const url = SUPABASE_URL + '/rest/v1/businesses'
-    + '?select=id,name,short_desc,city,state_code,category_id,price_range,rating,image_url,website,phone'
-    + '&status=eq.approved&order=featured.desc,rating.desc';
-  const res = await fetch(url, {
-    headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer ' + SUPABASE_ANON }
-  });
-  if (!res.ok) throw new Error('Failed to fetch');
-  return res.json();
-}
-
-const CAT = {1:'Food & Restaurant',2:'Fashion & Apparel',3:'Health & Wellness',4:'Technology',
-  5:'Beauty & Personal Care',6:'Art & Creative',7:'Finance & Legal',8:'Education & Tutoring',
-  9:'Freelancers',10:'Handyman Services',12:'Transportation & Logistics',13:'Digital & Social Media',14:'Others'};
-
-function setFilter(cat, btn) {
-  activeFilter = cat;
-  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
-  filtered = cat ? allBiz.filter(b => CAT[b.category_id] === cat) : allBiz;
-  currentIdx = 0;
-  renderStack();
-}
-
-function updateCounter() {
-  const total = filtered.length;
-  const shown = Math.min(currentIdx + 1, total);
-  document.getElementById('nav-counter').textContent = total ? `${shown} / ${total}` : '';
-  document.getElementById('ctrl-label').textContent  = total ? `${shown} of ${total}` : '';
-  document.getElementById('btn-prev').disabled = currentIdx <= 0;
-  document.getElementById('btn-next').disabled = currentIdx >= total - 1;
-}
-
-function cardHTML(biz, posClass) {
-  const cat  = CAT[biz.category_id] || '';
-  const loc  = [biz.city, biz.state_code].filter(Boolean).join(', ');
-  const stars = biz.rating ? '★ ' + parseFloat(biz.rating).toFixed(1) : '';
-  const href  = biz.website
-    ? (/^https?:\/\//i.test(biz.website) ? biz.website : 'https://' + biz.website)
-    : null;
-  const imgSrc = biz.image_url || null;
-
-  return `
-<div class="biz-card-stack ${posClass}" data-id="${biz.id}">
-  ${imgSrc
-    ? `<img class="card-img" src="${imgSrc}" alt="${esc(biz.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-    : ''}
-  <div class="card-img-placeholder" style="${imgSrc ? 'display:none' : ''}">
-    <img src="${PLACEHOLDER}" alt="placeholder">
-  </div>
-  <div class="card-body">
-    ${cat ? `<span class="card-cat-badge">${esc(cat)}</span>` : ''}
-    <div class="card-name">${esc(biz.name)}</div>
-    <div class="card-loc">
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-      ${esc(loc)}
-    </div>
-    ${biz.short_desc ? `<p class="card-desc">${esc(biz.short_desc)}</p>` : ''}
-    <div class="card-footer">
-      <div class="card-meta">
-        ${biz.price_range ? `<span class="card-price">${esc(biz.price_range)}</span>` : ''}
-        ${stars ? `<span class="card-rating">${stars}</span>` : ''}
-      </div>
-      ${href ? `<a class="card-btn" href="${href}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Visit →</a>` : ''}
-    </div>
-  </div>
-</div>`;
-}
-
-function esc(s) {
-  if (!s) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function renderStack() {
-  const container = document.getElementById('stack-container');
-  const controls  = document.getElementById('controls');
-  updateCounter();
-
-  if (!filtered.length) {
-    container.innerHTML = `<div class="state-msg"><p>No businesses found in this category yet.</p></div>`;
-    controls.style.display = 'none';
-    return;
-  }
-
-  if (currentIdx >= filtered.length) {
-    container.innerHTML = doneHTML();
-    controls.style.display = 'none';
-    return;
-  }
-
-  controls.style.display = 'flex';
-
-  const front  = filtered[currentIdx];
-  const middle = filtered[currentIdx + 1];
-  const back   = filtered[currentIdx + 2];
-
-  container.innerHTML = `
-    <div class="stack-wrap" id="stack-wrap">
-      ${back   ? cardHTML(back,   'is-back')   : ''}
-      ${middle ? cardHTML(middle, 'is-middle') : ''}
-      ${cardHTML(front, 'is-front')}
-    </div>`;
-
-  attachDrag();
-}
-
-function doneHTML() {
-  return `
-  <div class="done-card">
-    <div class="done-icon">🏁</div>
-    <h2>You've seen them all!</h2>
-    <p>You've browsed every verified business${activeFilter ? ' in this category' : ''}.<br>More are added regularly — check back soon.</p>
-    <button class="btn-restart" onclick="restartStack()">Start Over ↺</button>
-  </div>`;
-}
-
-function restartStack() {
-  currentIdx = 0;
-  renderStack();
-}
-
-function nextCard() {
-  if (currentIdx >= filtered.length - 1) return;
-  animateExit('left', () => {
-    currentIdx++;
-    renderStack();
-  });
-}
-
-function prevCard() {
-  if (currentIdx <= 0) return;
-  currentIdx--;
-  renderStack();
-}
-
-function animateExit(dir, cb) {
-  const front = document.querySelector('.is-front');
-  if (!front) { cb(); return; }
-  front.classList.add(dir === 'left' ? 'exit-left' : 'exit-right');
-  front.addEventListener('animationend', cb, { once: true });
-}
-
-// ── DRAG / SWIPE ──────────────────────────────────────────────────────────────
-function attachDrag() {
-  const card = document.querySelector('.is-front');
-  if (!card) return;
-
-  let startX = 0, startY = 0, isDragging = false;
-  let currentX = 0;
-  const THRESHOLD = 100;
-
-  function onStart(x, y) {
-    startX = x; startY = y;
-    isDragging = true;
-    card.classList.add('dragging');
-  }
-
-  function onMove(x) {
-    if (!isDragging) return;
-    currentX = x - startX;
-    const rotate = currentX * 0.08;
-    card.style.transform = `rotate(calc(-5deg + ${rotate}deg)) translateX(${currentX}px)`;
-  }
-
-  function onEnd(x) {
-    if (!isDragging) return;
-    isDragging = false;
-    card.classList.remove('dragging');
-    const delta = x - startX;
-    if (delta < -THRESHOLD) {
-      animateExit('left', () => { currentIdx++; renderStack(); });
-    } else if (delta > THRESHOLD && currentIdx > 0) {
-      animateExit('right', () => { currentIdx--; renderStack(); });
-    } else {
-      card.style.transition = 'transform 0.35s cubic-bezier(.22,.68,0,1.2)';
-      card.style.transform  = 'rotate(-5deg) translateX(0)';
-      setTimeout(() => { card.style.transition = ''; card.style.transform = ''; }, 380);
-    }
-    currentX = 0;
-  }
-
-  // Mouse
-  card.addEventListener('mousedown', e => { e.preventDefault(); onStart(e.clientX, e.clientY); });
-  window.addEventListener('mousemove', e => onMove(e.clientX));
-  window.addEventListener('mouseup',   e => onEnd(e.clientX), { once: true });
-
-  // Touch
-  card.addEventListener('touchstart', e => { const t = e.touches[0]; onStart(t.clientX, t.clientY); }, { passive: true });
-  card.addEventListener('touchmove',  e => { const t = e.touches[0]; onMove(t.clientX); }, { passive: true });
-  card.addEventListener('touchend',   e => { const t = e.changedTouches[0]; onEnd(t.clientX); });
-}
-
-// Keyboard
-document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextCard();
-  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   prevCard();
-});
-
-// ── INIT ──────────────────────────────────────────────────────────────────────
-(async () => {
-  try {
-    allBiz   = await fetchAll();
-    filtered = allBiz;
-    renderStack();
-  } catch (e) {
-    document.getElementById('stack-container').innerHTML =
-      `<div class="state-msg"><p style="color:#ef4444">Failed to load businesses. Please try again.</p></div>`;
-  }
-})();
-</script>
+<script src="js/businesses.js" defer></script>
 </body>
 </html>
