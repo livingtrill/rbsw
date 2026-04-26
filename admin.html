@@ -436,6 +436,67 @@ input, select, textarea { font-family: inherit; }
 #toast.show { transform: translateY(0); opacity: 1; }
 #toast.success { background: var(--green); color: #000; }
 #toast.error   { background: var(--red);   color: #fff; }
+
+/* ── RESPONSIVE ── */
+@media (max-width:900px) {
+  .stats-bar { grid-template-columns:repeat(2,1fr); }
+  .pending-grid { grid-template-columns:1fr; }
+}
+@media (max-width:700px) {
+  /* Auth gate */
+  .auth-box { padding:32px 22px; }
+
+  /* Nav */
+  .admin-nav { padding:0 16px; }
+  .nav-logo { font-size:0.9rem; }
+  .nav-badge { display:none; }
+
+  /* Stats */
+  .stats-bar { grid-template-columns:repeat(2,1fr); gap:1px; }
+
+  /* Tab bar: horizontal scroll */
+  .tab-bar {
+    overflow-x:auto; -webkit-overflow-scrolling:touch;
+    flex-wrap:nowrap; scrollbar-width:none; gap:0;
+  }
+  .tab-bar::-webkit-scrollbar { display:none; }
+  .tab-btn { flex-shrink:0; font-size:0.78rem; padding:14px 14px; }
+
+  /* Toolbar: stack */
+  .toolbar { flex-direction:column; align-items:stretch; gap:8px; }
+  .toolbar-right { margin-left:0; }
+  .toolbar-search { width:100%; }
+
+  /* Filter buttons: horizontal scroll row */
+  .toolbar { flex-wrap:nowrap; }
+  #panel-all .toolbar { flex-direction:column; }
+  #panel-all .toolbar-search { width:100%; }
+  #panel-all .filter-btn { flex-shrink:0; font-size:0.74rem; padding:6px 12px; }
+
+  /* Pending cards */
+  .pending-grid { grid-template-columns:1fr; gap:16px; }
+  .pending-card { padding:18px 16px; }
+
+  /* Data table: horizontal scroll */
+  .data-table { font-size:0.78rem; }
+  [style*="overflow-x:auto"] { -webkit-overflow-scrolling:touch; }
+
+  /* Modal: full width */
+  .modal { width:calc(100vw - 24px); max-height:90vh; overflow-y:auto; }
+  .modal-hdr { padding:18px 18px 14px; }
+  .modal-body { padding:16px 18px; }
+  .form-2col { grid-template-columns:1fr; }
+  .modal-footer { padding:14px 18px; flex-direction:column; gap:8px; }
+  .btn-cancel-modal, .btn-save { width:100%; justify-content:center; }
+
+  /* Toast */
+  #toast { right:12px; left:12px; bottom:16px; text-align:center; }
+}
+@media (max-width:480px) {
+  .stats-bar { grid-template-columns:1fr 1fr; }
+  .stat-card { padding:14px; }
+  .stat-value { font-size:1.6rem; }
+}
 </style>
 </head>
 <body>
